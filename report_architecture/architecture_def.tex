@@ -6,6 +6,7 @@
 \usepackage{amsfonts}
 \usepackage{amssymb}
 \usepackage{graphicx}
+\usepackage{my_hyperref}
 \usepackage[left=2cm,right=2cm,top=2cm,bottom=2cm]{geometry}
 \author{Théophile \textsc{Bastian}, Noémie \textsc{Cartier}, Nathanaël \textsc{Courant}}
 \title{Système digital -- rapport intermédiaire\\{\large Architecture, jeu d'instructions}}
@@ -13,14 +14,14 @@
 \maketitle
 
 \begin{abstract}
-Nous avons choisi d'utiliser une architecture proche d'ARM, en réduisant toutefois le jeu d'instructions.
+Nous avons choisi d'utiliser une architecture proche d'ARM, en réduisant toutefois le jeu d'instructions et avec de légères incompatibilités.
 \end{abstract}
 
 \section{Architecture}
 
 L'architecture que nous avons choisie est fortement inspirée d'ARM, dans le but d'une part de se rapprocher d'une architecture réelle, et d'autre part de pouvoir compiler du code vers notre assembleur en utilisant un compilateur standard (comme gcc par exemple), quitte à retravailler l'assembleur fourni pour se ramener à un jeu d'instructions gérées.
 
-\subsection{Mémoire}
+\subsection{Mémoire}\label{ssec:memory}
 
 Le processeur gère un nombre de registres à définir. L'accès à la ROM est impossible (§\ref{ssec:mem_instruct})~; l'accès à la RAM est limité à un accès lecture et un accès écriture par cycle (en particulier, une seule RAM est gérée). Les nombres seront représentés sur 64 bits, concrètement gérés par des nappes de 64 fils. Notons que le simulateur netlist gère les opérations bitwise directement sur les nappes de fils.
 
@@ -35,5 +36,169 @@ La ROM contiendra et représentera exclusivement les instructions du programme a
 Les opérations arithmétiques gérées sont uniquement l'addition, la soustraction et les opérations \emph{bitwise} standard. Cela sera suffisant~: l'horloge doit seulement s'incrémenter, et retirer 60 ou 24. La sortie sur 7 segments se fait quant à elle par recherche dans une table.
 
 \section{Assembleur}
+
+Dans cette section, nous dressons une liste exhaustive des opérations que nous avons prévu de supporter (et brièvement leur fonctionnement).
+
+\subsection{Syntaxe d'une opération} \label{ssec:opsyntax}
+
+Nous allons utiliser la syntaxe ARM pour décrire nos opérations~: une opération est de la forme
+
+\begin{center}\texttt{<Opération>[<conditionnelle>][S] <argument(s) de l'opération>}\end{center}
+
+où \texttt{[...]} désigne une partie optionnelle~; \texttt{<conditionnelle>} désigne une condition portant sur les flags d'exécution de l'instruction (\textit{ie.}, l'instruction sera exécutée \textit{ssi} la condition est vraie, ce qui permet d'éviter les \texttt{JMP} sur des conditions simples)~; et \texttt{S}, lorsque présent, met à jour les flags (pour certaines opérations, \texttt{S} n'existe pas et les flags sont toujours mis à jour). Les arguments, quant à eux, sont spécifiques au type de l'opération.
+
+\subsection{Opérations arithmétiques}
+
+Une opération arithmétique a trois arguments, avec la syntaxe suivante~:
+
+\begin{center}\texttt{Rd, Rn, Opérande2}\end{center}
+
+où \texttt{Rd} est le registre de destination (qui n'est pas nécessairement l'un des registres des opérandes), \texttt{Rn} est le registre de l'opérande 1 ($op_1$) et \texttt{Opérande2} est la description de l'opérande 2 ($op_2$) (§\ref{ssec:descr_op2}).
+
+\begin{itemize}
+\item \texttt{ADD}~: $op_1 + op_2$
+\item \texttt{ADC}~: $op_1 + op_2 + \text{carry bit}$
+\item \texttt{SUB}~: $op_1 - op_2$
+\item \texttt{SBC}~: $op_1 - op_2 + \text{carry bit} - 1$
+\item \texttt{RSB}~: $op_2 - op_1$
+\item \texttt{RSC}~: $op_2 - op_1 + \text{carry bit} - 1$
+
+\item \texttt{AND}~: $op_1\text{ AND }op_2$
+\item \texttt{EOR}~: $op_1\text{ XOR }op_2$
+\item \texttt{ORR}~: $op_1\text{ OR }op_2$
+\item \texttt{BIC}~: $op_1\text{ AND NOT }op_2$
+\end{itemize}
+
+\subsection{Comparaisons}
+
+Une opération de comparaison a deux arguments, avec la syntaxe suivante~:
+
+\begin{center}\texttt{Rn, Opérande2}\end{center}
+
+où \texttt{Rn} est le registre de l'opérande 1 ($op_1$) et \texttt{Opérande2} est la description de l'opérande 2 ($op_2$) (§\ref{ssec:descr_op2}).
+
+De plus, \emph{le paramètre \texttt{S} n'existe pas} pour les opérations de comparaison, car automatiquement vrai. Le \emph{seul effet} de ces instructions est donc de mettre à jour les flags.
+
+\begin{itemize}
+\item \texttt{CMP}~: $op_1 - op_2$ (sans conserver le résultat)
+\item \texttt{CMN}~: $op_1 + op_2$ (sans conserver le résultat)
+\item \texttt{TST}~: $op_1\text{ AND }op_2$ (sans conserver le résultat)
+\item \texttt{TEQ}~: $op_1\text{ XOR }op_2$ (sans conserver le résultat)
+\end{itemize}
+
+\subsection{Déplacement de données}
+
+Une opération de déplacement de données a deux arguments, avec la syntaxe suivante~:
+
+\begin{center}\texttt{Rd, Opérande2}\end{center}
+
+où \texttt{Rd} est le registre de destination et \texttt{Opérande2} est la description de l'opérande 2 ($op_2$) (§\ref{ssec:descr_op2}).
+
+\begin{itemize}
+\item \texttt{MOV}~: $op_2$
+\item \texttt{MVN}~: $\text{NOT } op_2$
+\end{itemize}
+
+\subsection*{Description de l'opérande 2}\label{ssec:descr_op2}
+
+Dans tous les paragraphes précédents, l'\emph{opérande 2} ($op_2$) est~:
+
+\begin{itemize}
+\item soit une constante numérique 8 bits précédée d'un \texttt{\#}, prenant l'une des formes \texttt{\#}$\langle$\textit{constante\_{}décimale}$\rangle$, \texttt{\#{}0x}$\langle$\textit{constante\_{}hexadécimale}$\rangle$ ou \texttt{\#{}0b}$\langle$\textit{constante\_{}binaire}$\rangle$~;
+\item soit un nom de registre.
+\end{itemize}
+
+De plus, si l'opérande 2 est suivie d'une instruction de décalage prenant la forme~:
+
+\begin{center}\texttt{, <instruction> <opérande>}\end{center}
+
+où \texttt{<opérande>} ($op$) est une constante 6 bits\footnote{5 dans la référence, mais nos nombres sont en 64 bits} ou un registre (seuls les 6 bits de poids faible seront pris en compte), et où \texttt{<instruction>} est l'une des instructions suivantes~:
+\begin{itemize}
+\item \texttt{LSL}~: décalage logique à gauche de $op$ bits
+\item \texttt{LSR}~: décalage logique à droite de $op$ bits
+\item \texttt{ASR}~: décalage arithmétique à droite de $op$ bits
+\end{itemize}
+
+\noindent\textit{Par exemple, \texttt{ADD r0, r1, r1, LSL \#{}2}, où l'opérande 2 est \texttt{r1, LSL \#{}2}, effectue} ${r0 \leftarrow r1 + (r1 \ll 2)}$.
+
+\subsection{Accès mémoire}
+
+Une opération d'accès mémoire a deux arguments, avec la syntaxe suivante~:
+
+\begin{center}\texttt{Rd, adresse}\end{center}
+
+où \texttt{Rd} est le registre de destination ($R_d$) et \texttt{adresse} est la description de l'adresse mémoire ($addr$). Ces opérations travaillent toutes sur des mots mémoire entiers (§\ref{ssec:memory}).
+
+De plus, \emph{le paramètre \texttt{S} n'existe pas} pour les opérations d'accès mémoire (car ces opérations ne sont pas branchées sur le circuit arithmétique).
+
+Pour respecter la compatibilité avec ARM, la description d'une adresse mémoire a la syntaxe suivante~:
+\begin{center}\texttt{[\textit{descr}]}\end{center}
+où \texttt{\textit{descr}} est soit un registre, soit une constante explicite.
+
+Les opérations d'accès mémoire sont~:
+
+\begin{itemize}
+\item \texttt{LDR}~: $R_d \leftarrow  \text{Mémoire}[addr]$
+\item \texttt{STR}~: $R_d \rightarrow \text{Mémoire}[addr]$
+\end{itemize}
+
+\subsection{Sauts}
+
+Une ligne comportant exactement
+\begin{center}\textit{$\langle$nom$\rangle$}\texttt{:}\end{center}
+\noindent{}crée un label nommé \textit{nom} pointant sur l'instruction suivant cette ligne.
+
+On définit (d'après la syntaxe précédente) une commande ayant pour argument un nom de label $lbl$ et n'acceptant \emph{pas} l'option \texttt{S}~:
+\begin{itemize}
+\item \texttt{JMP}~: saute au label $lbl$
+\end{itemize}
+
+Notons que ces deux éléments sont purement du sucre syntaxique, car le pointeur d'instructions est un registre comme les autres. Il suffit donc en pratique de transformer une instruction \texttt{JMP} en une instruction \texttt{MOV} ou \texttt{ADD} (selon si on veut se déplacer relativement ou de manière absolue).
+
+\subsection{Conditionnelles et flags}
+
+Les flags suivants existent~:
+
+\begin{itemize}
+\item \texttt{N}~: le dernier résultat est strictement négatif
+\item \texttt{Z}~: le dernier résultat est nul
+\item \texttt{C}~: le dernier calcul a produit une retenue sortante
+\item \texttt{V}~: le dernier calcul a produit un overflow
+\end{itemize}
+
+Une conditionnelle (§\ref{ssec:opsyntax}) est alors l'un des motifs décrits ci-dessous~:
+
+%\begin{table}[h!]
+%\centering
+\begin{center}
+\begin{tabular}{l|l|l}
+\textbf{Id} & \textbf{Motif} & \textbf{Condition}\\
+\hline\hline
+0000 & EQ & $Z$ \\
+0001 & NE & $\bar{Z}$ \\
+0010 & HS / CS & $C$ \\
+0011 & LO / CC & $\bar{C}$ \\
+0100 & MI & $N$ \\
+0101 & PL & $\bar{N}$ \\
+0110 & VS & $V$ \\
+0111 & VC & $\bar{V}$ \\
+1000 & HI & $C \wedge \bar{Z}$ \\
+1001 & LS & $\bar{C} \vee Z$ \\
+1010 & GE & $(N \wedge V) \vee (\bar{N} \wedge \bar{V})$ \\
+1011 & LT & $(N \wedge \bar{V}) \vee (\bar{N} \wedge V)$ \\
+1100 & GT & $GE \wedge \bar{Z}$ \\
+1101 & LE & $LT \vee Z$ \\
+1110 & AL & $1$ \\
+1111 & NV & réservé \\
+\end{tabular}
+\end{center}
+%\caption{Conditionnelles définies et leur valeur logique}
+%\end{table}
+
+\section*{Référence(s)}
+
+\begin{itemize}
+\item La référence ARM utilisée~: \url{http://simplemachines.it/doc/arm_inst.pdf}
+\end{itemize}
 
 \end{document}
