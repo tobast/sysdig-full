@@ -17,3 +17,7 @@ class FLAGS_POSITION:
 	Z = 2
 	C = 3
 	V = 4
+
+class REGISTERS:
+        pc = 0
+        number = 16
