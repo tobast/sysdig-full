@@ -4,7 +4,7 @@ def wire_expand(n, source, destr = None):
     """Prend un fil, et retourne une nappe consistant en
        n copies de ce fil (par exponentiation rapide)"""
     assert(n > 0)
-    assert(destr == None or get_size(destr) == n * get_size(source))
+    assert(destr == None or nl.get_size(destr) == n * nl.get_size(source))
     c = 1
     k = 0
     l = [source]
