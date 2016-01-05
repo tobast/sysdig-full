@@ -93,8 +93,8 @@ def RAM(addr_size, word_size, read_addr, write_enable, write_addr, data, \
         destr = fresh(word_size)
     assert(vars[addr] == addr_size and vars[destr] == vars[data] == word_size
            and vars[write_enable] == 1)
-    instrs.append("{} = RAM {} {} {} {} {} {}".format(destr, addr_size, word_size,
-                                    read_addr, write_enable, write_addr, data))
+    instrs.append("{} = RAM {} {} {} {} {} {}".format(destr, addr_size,
+                    word_size, read_addr, write_enable, write_addr, data))
     return destr
 
 def CONCAT(source1, source2, destr = None):
@@ -123,6 +123,7 @@ def print_netlist():
     print("INPUT", ", ".join(inputs))
     print("OUTPUT", ", ".join(outputs))
     print("VAR")
-    print("  " + ", ".join(name + " : " + str(size) for name, size in vars.items()))
+    print("  " + ", ".join(name + " : " +
+                           str(size) for name, size in vars.items()))
     print("IN")
     print("\n".join(instrs))
