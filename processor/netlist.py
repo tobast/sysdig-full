@@ -13,6 +13,10 @@ def fresh(num_bits = 1):
     vars[name] = num_bits
     return name
 
+def get_size(name):
+    """Retourne la taille de name"""
+    return vars[name]
+
 def input(name):
     """Déclare name comme entrée"""
     inputs.append(name)
@@ -20,6 +24,12 @@ def input(name):
 def output(name):
     """Déclare name comme sortie"""
     outputs.append(name)
+
+def CONST(value, destr = None):
+    if destr == None:
+        destr = fresh()
+    assert(value == 0 or value == 1)
+    instrs.append("{} = {}", destr, value)
 
 def REG(source, destr = None):
     if destr == None:
