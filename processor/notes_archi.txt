@@ -1,0 +1,33 @@
+Constitution d'une instruction :
+ - 4 bits pour l'instruction en elle-même ;
+ - 4 bits pour la conditionnelle ;
+ - 1 bit pour savoir q'il faut écrire le résultat ;
+ - 1 bit pour savoir si op1 = -1 ;
+ - 1 bit pour savoir si on prend en compte le carry ;
+ - 1 bit pour les flags ;
+ - 4 bits pour le registre de destination ;
+ - 4 bits pour le registre de op1 ;
+ - 1 + 8 (ou 16) + 6 + 2 = 17 bits pour op2 ;
+ - 16 bits pour l'adressage mémoire (déplacements).
+
+Ordre :
+ - conditionnelle (4)
+ - instruction (4)
+ - écrire ? (1)
+ - carry (1)
+ - flags set (1)
+ - registre de destination (4)
+ - op1 (4)
+ - op1 = -1 ? (1)
+ - op2 (25)
+ - adressage mémoire (16)
+
+Total : 53 ou 61 bits pour l'instant.
+
+Nombre de registres nécessaires :
+ - nombre des secondes ;
+ - nombre des minutes ;
+ - nombre des heures ;
+ - ?
+
+Total : 16 registres pour être large (notés r0, r1, ..., r15).
