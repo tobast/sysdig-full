@@ -2,7 +2,7 @@
 
 class OPCODE_FRAME :
 	conditionnal = 1
-	instuction = 5
+	instruction = 5
 	writeResult = 9
 	useCarry = 10
 	setFlags = 11
@@ -19,5 +19,14 @@ class FLAGS_POSITION:
 	V = 4
 
 class REGISTERS:
-        pc = 0
-        number = 16
+	pc = 0
+	number = 16
+
+class INSTRUCTIONS_FORMAT:
+	ADD = 0b0000
+	SUB = 0b1000
+	RSB = 0b0010
+	AND = 0b0110
+	EOR = 0b0100
+	ORR = 0b0101
+	BIC = 0b1110
