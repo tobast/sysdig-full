@@ -2,9 +2,11 @@
 # -*- coding: utf-8 -*-
 
 import alu
+import flags
 import op1processor
 import op2processor
 import opcodeGetter
+import registers
 
 import constants
 import netlist as nl
@@ -24,14 +26,18 @@ def main():
 	
 	### ALU ###
 	class aluPin:
-		i_opcode = opcodeGetPin.o_opcode,
+		i_instr = SLICE(constants.OPCODE_FRAME.instruction,\
+				constants.OPCODE_FRAME+3, opcodeGetPin.o_opcode)
+		i_useCarry = SELECT(constants.OPCODE_FRAME.useCarry,
+				opcodeGetPin.o_opcode)
 		i_op1 = fresh(64)
 		i_op2 = fresh(64)
 		i_carryFlag = fresh(1)
 		o_val = fresh(64)
 		o_flags = fresh(4)
 
-	alu.alu(aluPin.i_opcode,\
+	alu.alu(aluPin.i_instr,\
+		aluPin.i_useCarry,\
 		aluPin.i_op1,\
 		aluPin.i_op2,\
 		aluPin.i_carryFlag,\
@@ -44,6 +50,8 @@ def main():
 			opcodeGetPin.o_opcode)
 		i_reg1addr = fresh(4)
 		i_reg2addr = fresh(4)
+		i_destReg = SLICE(constants.OPCODE_FRAME.destRegister,\
+			constants.OPCODE_FRAME.destRegister+3, opcodeGetPin.o_opcode)
 		i_value = aluPin.o_val
 		o_reg1 = fresh(64)
 		o_reg2 = fresh(64)
@@ -53,10 +61,42 @@ def main():
 		registersPin.i_setVal,\
 		registersPin.i_reg1addr,\
 		registersPin.i_reg2addr,\
+		registersPin.i_destReg,\
 		registersPin.i_value,\
 		registersPin.o_reg1,\
 		registersPin.o_reg2,\
 		registersPin.o_pctr)
+
+	### OP1_PROCESSOR ###
+	class op1processorPin:
+		i_op1 = SLICE(constants.OPCODE_FRAME.op1,constants.OPCODE_FRAME.op1+3,\
+				opcodeGetPin.o_opcode)
+		i_op1cst = SELECT(constants.OPCODE_FRAME.isOp1Filled,\
+				opcodeGetPin.o_opcode)
+		i_regVal = registersPin.o_reg1
+		o_reqAddr = registersPin.reg1addr
+		o_val = aluPin.i_reg1
+	
+	op1processor.op1processor(
+		op1processorPin.i_op1,\
+		op1processorPin.i_op1cst,\
+		op1processorPin.i_regVal,\
+		op1processorPin.o_reqAddr,\
+		op1processorPin.o_val)
+
+	### OP2_PROCESSOR ###
+	class op2processorPin:
+		i_op2 = SLICE(constants.OPCODE_FRAME.op1,constants.OPCODE_FRAME.op1+3,\
+				opcodeGetPin.o_opcode)
+		i_regVal = registersPin.o_reg2
+		o_reqAddr = registersPin.reg2addr
+		o_val = aluPin.i_reg2
+
+	op2processor.op2processor(
+		op2processorPin.i_op2,\
+		op2processorPin.i_regVal,\
+		op2processorPin.o_reqAddr,\
+		op2processorPin.o_val)
 	
 	### FLAGS ###
 	class flagsPin:
