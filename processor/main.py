@@ -2,8 +2,11 @@
 # -*- coding: utf-8 -*-
 
 import alu
-import constants
+import op1processor
+import op2processor
 import opcodeGetter
+
+import constants
 import netlist as nl
 
 def main():
@@ -47,8 +50,10 @@ def main():
 		o_pctr = opcodeGetPin.i_pctr
 
 	registers.registers(
-		registersPin.i_opcode,\
 		registersPin.i_setVal,\
+		registersPin.i_reg1addr,\
+		registersPin.i_reg2addr,\
+		registersPin.i_value,\
 		registersPin.o_reg1,\
 		registersPin.o_reg2,\
 		registersPin.o_pctr)
