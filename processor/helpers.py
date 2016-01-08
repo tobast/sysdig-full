@@ -25,3 +25,21 @@ def wire_expand(n, source, destr = None):
 	for i in range(1, len(bits)):
 		u = nl.CONCAT(u, l[bits[i]])
 	return nl.CONCAT(u, l[k], destr)
+
+def expandedCst_1bit(bitpos, cst, i_bitwire, o_out):
+	""" Inserts a wire into a 64-sized array of `cst', replacing the wire at
+	position `bitpos' with `i_bitwire' """
+	if bitpos > 1:
+		if bitpos == 64:
+			lowOut = o_out
+		else:
+			lowOut = None
+		lowWei = CONCAT(wire_expand(bitpos-1, CONST(cst)),\
+				i_bitwire, lowOut)
+	else:
+		lowWei = CONST(cst)
+	
+	if bitpos == 64:
+		return lowWei
+	return CONCAT(lowWei, wire_expand(64-bitpos, CONST(cst)), o_out)
+
