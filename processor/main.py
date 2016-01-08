@@ -9,7 +9,7 @@ import opcodeGetter
 import registers
 
 import constants
-import netlist as nl
+import * from netlist
 
 def main():
 	### OPCODE_GETTER ###
