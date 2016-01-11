@@ -1,5 +1,5 @@
 import constants
-import * from netlist
+from netlist import *
 import helpers as hel
 
 def opcodeGetter(i_pctr, i_flagValue, o_flagSelect=None, o_opcode=None):
