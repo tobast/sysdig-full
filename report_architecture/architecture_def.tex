@@ -125,7 +125,7 @@ où \texttt{<opérande>} ($op$) est une constante 6 bits\footnote{5 dans la réf
 
 Une opération d'accès mémoire a deux arguments, avec la syntaxe suivante~:
 
-\begin{center}\texttt{Rd, adresse}\end{center}
+\begin{center}\texttt{(Rd~|~Opérande1), adresse}\end{center}
 
 où \texttt{Rd} est le registre de destination ($R_d$) et \texttt{adresse} est la description de l'adresse mémoire ($addr$). Ces opérations travaillent toutes sur des mots mémoire entiers (§\ref{ssec:memory}).
 
@@ -139,7 +139,7 @@ Les opérations d'accès mémoire sont~:
 
 \begin{itemize}
 \item \texttt{LDR}~: $R_d \leftarrow  \text{Mémoire}[addr]$
-\item \texttt{STR}~: $R_d \rightarrow \text{Mémoire}[addr]$
+\item \texttt{STR}~: $op_1 \rightarrow \text{Mémoire}[addr]$
 \end{itemize}
 
 \subsection{Sauts}
