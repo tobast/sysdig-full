@@ -10,7 +10,6 @@ class OPCODE_FRAME :
 	op1 = 16
 	isOp1Filled = 20
 	op2 = 21
-	memAddr = 46
 
 class FLAGS_POSITION:
 	N = 1
