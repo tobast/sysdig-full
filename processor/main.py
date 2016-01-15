@@ -7,6 +7,8 @@ import op1processor
 import op2processor
 import opcodeGetter
 import registers
+import memory_unit
+import result_selector
 
 import constants
 from netlist import *
@@ -52,7 +54,7 @@ def main():
 		i_reg2addr = fresh(4)
 		i_destReg = SLICE(constants.OPCODE_FRAME.destRegister,\
 			constants.OPCODE_FRAME.destRegister+3, opcodeGetPin.o_opcode)
-		i_value = aluPin.o_val
+		i_value = fresh(64)
 		o_reg1 = fresh(64)
 		o_reg2 = fresh(64)
 		o_pctr = opcodeGetPin.i_pctr
@@ -110,11 +112,35 @@ def main():
 	SELECT(constants.FLAGS_POSITION.C, flagsPin.o_flagsOut, aluPin.i_carryFlag)
 
 	flags.flags(
-		i_flags,\
-		i_flagWrite,\
-		i_flagSelect,\
-		o_flagVal,\
-		o_flagsOut)
+		flagsPin.i_flags,\
+		flagsPin.i_flagWrite,\
+		flagsPin.i_flagSelect,\
+		flagsPin.o_flagVal,\
+		flagsPin.o_flagsOut)
+
+	class memoryUnitPin:
+		i_instr = aluPin.i_instr
+		i_value = op1processorPin.o_val
+		i_addr = op2processorPin.o_val
+		o_data = fresh(64)
+
+	memory_unit.memory_unit(
+		memoryUnitPin.i_instr,\
+		memoryUnitPin.i_value,\
+                memoryUnitPin.i_addr,\
+                memoryUnitPin.o_data)
+
+	class resultSelectorPin:
+		i_instr = aluPin.i_instr
+		i_mem_result = memoryUnitPin.o_data
+		i_alu_result = aluPin.o_val
+		o_output = registersPin.i_value
+
+	result_selector.result_selector(
+		resultSelectorPin.i_instr,\
+                resultSelectorPin.i_mem_result,\
+                resultSelectorPin.i_alu_result,\
+                resultSelectorPin.o_output)
 
 	### WE'RE DONE! ###
 	nl.print_netlist()
