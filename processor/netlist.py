@@ -29,7 +29,15 @@ def CONST(value, destr = None):
 	if destr == None:
 		destr = fresh()
 	assert(value == 0 or value == 1)
-	instrs.append("{} = {}", destr, value)
+	instrs.append("{} = {}".format(destr, value))
+
+def WIRE(source, destr = None):
+    if destr == None:
+        return source
+    destr = fresh(vars[source])
+    assert(vars[source] == vars[destr])
+    instrs.append("{} = {}".format(destr, source))
+    return destr    
 
 def REG(source, destr = None):
 	if destr == None:
