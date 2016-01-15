@@ -31,3 +31,14 @@ class INSTRUCTIONS_FORMAT:
 	BIC = 0b1110
 	LDR = 0b1001
 	STR = 0b1011
+
+class OP2_FRAME:
+	isRegister = 1
+	value = 2 # register name or explicit 8-bits constant
+	shift_opcode = 10
+	shift_val = 13
+class OP2_SHIFT_OPCODE:
+	LSL = 0b00
+	LSR = 0b10
+	ASR = 0b11
+
