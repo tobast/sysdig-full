@@ -39,13 +39,17 @@ def full_adder_n(n, nappe1, nappe2, c_in, need_fl_V, \
 	fl_Z = nl.AND(nl.NOT(s1), fl_Z_1)
 	if need_fl_V:
 		fl_V = nl.XOR(c_temp, c_out)
-	return (s, c_out)
+	return (s, c_out, fl_Z, fl_V)
 
 def alu(instr, useCarry, op1, op2, carryFlag, val = None, flags = None):
 	op2_1 = nl.XOR(op2, hel.wire_expand(64, nl.SELECT(1, opcode)))
 	c_in = nl.MUX(OR(nl.SELECT(1, opcode), SELECT(3,opcode)), \
 		carryFlag, useCarry)
-	adsu = full_adder_n(64, op1, op2_1, c_in, True)
+	adsu, flag_C, flag_Z, flag_V = full_adder_n(64, op1, op2_1, c_in, True)
 	rs = full_adder_n(64, op1_1, op2, c_in, True)
 	arith = nl.MUX(adsu, rs, hel.wire_expand(64, nl.SELECT(3, opcode))) 
 	val = nl.MUX(arith, boo, hel.wire_expand(64, nl.SELECT(2, opcode)))
+	flag_N = nl.SELECT(64, adsu)
+	flags_1 = nl.CONCAT(flag_N, flag_Z)
+	flags_2 = nl.CONCAT(flags_2, flag_C)
+	flags = nl.CONCAT(flags_2, flag_V, flags)
