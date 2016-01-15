@@ -4,7 +4,7 @@ import helpers as hel
 
 def flagsMem(i_flags, i_flagWrite, o_flagsOut):
 	""" Handles the actual flags storage """
-	writeArray = wire_expand(4, i_flagWrite)
+	writeArray = hel.wire_expand(4, i_flagWrite)
 	regOutWire = fresh(4)
 	flagsInput = MUX(regOutWire, i_flags, writeArray)
 	REG(flagsInput, regOutWire)

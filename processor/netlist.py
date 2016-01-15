@@ -30,6 +30,7 @@ def CONST(value, destr = None):
 		destr = fresh()
 	assert(value == 0 or value == 1)
 	instrs.append("{} = {}".format(destr, value))
+	return destr
 
 def WIRE(source, destr = None):
 	if destr == None:
@@ -99,10 +100,11 @@ def RAM(addr_size, word_size, read_addr, write_enable, write_addr, data, \
 		destr = None):
 	if destr == None:
 		destr = fresh(word_size)
-	assert(vars[addr] == addr_size and vars[destr] == vars[data] == word_size
-		   and vars[write_enable] == 1)
-	instrs.append("{} = RAM {} {} {} {} {} {}".format(destr, addr_size, word_size,
-									read_addr, write_enable, write_addr, data))
+	assert(vars[read_addr] == vars[write_addr] == addr_size)
+	assert(vars[destr] == vars[data] == word_size)
+	assert(vars[write_enable] == 1)
+	instrs.append("{} = RAM {} {} {} {} {} {}".format(destr, addr_size,\
+			word_size, read_addr, write_enable, write_addr, data))
 	return destr
 
 def CONCAT(source1, source2, destr = None):

@@ -29,8 +29,8 @@ def main():
 	### ALU ###
 	class aluPin:
 		i_instr = SLICE(constants.OPCODE_FRAME.instruction,\
-				constants.OPCODE_FRAME+3, opcodeGetPin.o_opcode)
-		i_useCarry = SELECT(constants.OPCODE_FRAME.useCarry,
+				constants.OPCODE_FRAME.instruction+3, opcodeGetPin.o_opcode)
+		i_useCarry = SELECT(constants.OPCODE_FRAME.useCarry,\
 				opcodeGetPin.o_opcode)
 		i_op1 = fresh(64)
 		i_op2 = fresh(64)
@@ -76,8 +76,8 @@ def main():
 		i_op1cst = SELECT(constants.OPCODE_FRAME.isOp1Filled,\
 				opcodeGetPin.o_opcode)
 		i_regVal = registersPin.o_reg1
-		o_reqAddr = registersPin.reg1addr
-		o_val = aluPin.i_reg1
+		o_reqAddr = registersPin.i_reg1addr
+		o_val = aluPin.i_op1
 	
 	op1processor.op1processor(
 		op1processorPin.i_op1,\
@@ -88,11 +88,12 @@ def main():
 
 	### OP2_PROCESSOR ###
 	class op2processorPin:
-		i_op2 = SLICE(constants.OPCODE_FRAME.op1,constants.OPCODE_FRAME.op1+3,\
+		i_op2 = SLICE(constants.OPCODE_FRAME.op2,\
+				constants.OPCODE_FRAME.op2+16,\
 				opcodeGetPin.o_opcode)
 		i_regVal = registersPin.o_reg2
-		o_reqAddr = registersPin.reg2addr
-		o_val = aluPin.i_reg2
+		o_reqAddr = registersPin.i_reg2addr
+		o_val = aluPin.i_op2
 
 	op2processor.op2processor(
 		op2processorPin.i_op2,\
@@ -103,7 +104,7 @@ def main():
 	### FLAGS ###
 	class flagsPin:
 		i_flags = aluPin.o_flags
-		i_flagWrite =
+		i_flagWrite = \
 			SELECT(constants.OPCODE_FRAME.setFlags, opcodeGetPin.o_opcode)
 		i_flagSelect = opcodeGetPin.o_flagSelect
 		o_flagVal = opcodeGetPin.i_flagValue
@@ -143,7 +144,7 @@ def main():
                 resultSelectorPin.o_output)
 
 	### WE'RE DONE! ###
-	nl.print_netlist()
+	print_netlist()
 
 if __name__ == '__main__':
 	main()

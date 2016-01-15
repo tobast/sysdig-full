@@ -24,14 +24,14 @@ def mux_n(n, l, addr, destr = None):
 	k = nl.get_size(l[0])
 	if n == 1:
 		return nl.MUX(l[0], l[1], helpers.wire_expand(k,
-				nl.select(1, addr)), destr)
+				nl.SELECT(1, addr)), destr)
 	z = 1 << (n - 1)
 	return nl.MUX(mux_n(n - 1, l[:z], addr), mux_n(n - 1, l[z:], addr),
-		      helpers.wire_expand(k, nl.select(n, addr)), destr)
+		      helpers.wire_expand(k, nl.SELECT(n, addr)), destr)
 
 def demux_n(n, l, source, addr):
 	k = nl.get_size(source)
-	u = helpers.wire_expand(k, nl.select(n, addr))
+	u = helpers.wire_expand(k, nl.SELECT(n, addr))
 	z = 1 << (n - 1)
 	if n == 1:
 		nl.AND(u, source, l[1])
@@ -44,9 +44,9 @@ def registers(set_val, r1addr, r2addr, setaddr, value, r1 = None, r2 = None,
 	      pc = None):
 	n = nl.get_size(value)
 	regs = []
-	for i in range(constants.REGISTER.number):
+	for i in range(constants.REGISTERS.number):
 		write_enable = nl.fresh()
-		if i == constants.REGISTER.pc:
+		if i == constants.REGISTERS.pc:
 			pc = register_pc(value, write_enable, pc)
 			reg = pc
 		else:

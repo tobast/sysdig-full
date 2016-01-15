@@ -16,7 +16,7 @@ def opcodeGetter(i_pctr, i_flagValue, o_flagSelect=None, o_opcode=None):
 	
 	maskWrite = hel.expandedCst_1bit(constants.OPCODE_FRAME.writeResult, 1,\
 			i_flagValue)
-	maskFlags = hel.expandedCst_1bit(constants.OPCODE_FRAME,setFlags, 1,\
+	maskFlags = hel.expandedCst_1bit(constants.OPCODE_FRAME.setFlags, 1,\
 			i_flagValue)
 
 	return AND(romOut, AND(maskWrite, maskFlags), o_opcode)

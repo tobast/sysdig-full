@@ -5,8 +5,8 @@ from constants import INSTRUCTIONS_FORMAT
 UNUSED_ADDR_ZERO = True
 
 def memory_unit(instr, value, addr, result = None):
-	is_memory = nl.AND(nl.SELECT(instr, 1), nl.SELCT(instr, 4))
-	we = nl.AND(is_memory, nl.SELECT(instr, 3))
+	is_memory = nl.AND(nl.SELECT(1, instr), nl.SELECT(4, instr))
+	we = nl.AND(is_memory, nl.SELECT(3, instr))
 	addr = nl.SLICE(1, 16, addr)
 	if UNUSED_ADDR_ZERO:
             addr = nl.AND(addr, helpers.wire_expand(16, is_memory))
