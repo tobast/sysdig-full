@@ -118,14 +118,14 @@ def SLICE(i, j, source, destr = None):
 	if destr == None:
 		destr = fresh(j - i + 1)
 	assert(vars[destr] == j - i + 1 and 1 <= i <= j <= vars[source])
-	instrs.append("{} = SLICE {} {} {}".format(destr, i, j, source))
+	instrs.append("{} = SLICE {} {} {}".format(destr, i - 1, j - 1, source))
 	return destr
 
 def SELECT(index, source, destr = None):
 	if destr == None:
 		destr = fresh()
 	assert(vars[destr] == 1 and 1 <= index <= vars[source])
-	instrs.append("{} = SELECT {} {}".format(destr, index, source))
+	instrs.append("{} = SELECT {} {}".format(destr, index - 1, source))
 	return destr
 
 def print_netlist():
