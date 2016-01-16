@@ -111,21 +111,21 @@ def CONCAT(source1, source2, destr = None):
 	if destr == None:
 		destr = fresh(vars[source1] + vars[source2])
 	assert(vars[destr] == vars[source1] + vars[source2])
-	instrs.append("{} = CONCAT {} {}".format(destr, source1, source2))
+	instrs.append("{} = CONCAT {} {}".format(destr, source2, source1))
 	return destr
 
 def SLICE(i, j, source, destr = None):
 	if destr == None:
 		destr = fresh(j - i + 1)
 	assert(vars[destr] == j - i + 1 and 1 <= i <= j <= vars[source])
-	instrs.append("{} = SLICE {} {} {}".format(destr, i - 1, j - 1, source))
+	instrs.append("{} = SLICE {} {} {}".format(destr, vars[source] - j, vars[source] - i, source))
 	return destr
 
 def SELECT(index, source, destr = None):
 	if destr == None:
 		destr = fresh()
 	assert(vars[destr] == 1 and 1 <= index <= vars[source])
-	instrs.append("{} = SELECT {} {}".format(destr, index - 1, source))
+	instrs.append("{} = SELECT {} {}".format(destr, vars[source] - index, source))
 	return destr
 
 def print_netlist():

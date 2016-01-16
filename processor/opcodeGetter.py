@@ -8,7 +8,7 @@ def opcodeGetter(i_pctr, i_flagValue, o_flagSelect=None, o_opcode=None):
 	if o_opcode == None:
 		o_opcode = fresh(64)
 
-	romOut = ROM(64,64,i_pctr)
+	romOut = ROM(16, 64, SLICE(1, 16, i_pctr))
 	SLICE(constants.OPCODE_FRAME.conditionnal,
 		constants.OPCODE_FRAME.conditionnal+3,
 		romOut,
