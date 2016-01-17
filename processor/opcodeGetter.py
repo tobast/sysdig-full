@@ -3,6 +3,7 @@ from netlist import *
 import helpers as hel
 
 def opcodeGetter(i_pctr, i_flagValue, o_flagSelect=None, o_opcode=None):
+	push_context("opcode_getter")
 	if o_flagSelect == None:
 		o_flagSelect = fresh(4)
 	if o_opcode == None:
@@ -19,4 +20,6 @@ def opcodeGetter(i_pctr, i_flagValue, o_flagSelect=None, o_opcode=None):
 	maskFlags = hel.expandedCst_1bit(constants.OPCODE_FRAME.setFlags, 1,\
 			i_flagValue)
 
-	return AND(romOut, AND(maskWrite, maskFlags), o_opcode)
+	o_opcode = AND(romOut, AND(maskWrite, maskFlags), o_opcode)
+	pop_context()
+	return o_opcode

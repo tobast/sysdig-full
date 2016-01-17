@@ -34,6 +34,8 @@ def cndSelector(flags, i_flagSelect, o_flagVal):
 	return XOR(sBits[1], preB1, o_flagVal)
 
 def flags(i_flags, i_flagWrite, i_flagSelect, o_flagVal, o_flagsOut):
+	push_context("flags")
 	o_flagsOut = flagsMem(i_flags, i_flagWrite, o_flagsOut)
 	o_flagVal = cndSelector(o_flagsOut, i_flagSelect, o_flagVal)
+	pop_context()
 	return o_flagVal, o_flagsOut

@@ -4,11 +4,18 @@ instrs = []
 inputs = []
 outputs = []
 
+context = ["l"]
+
+def push_context(name):
+	context.append(name)
+def pop_context():
+	context.pop()
+
 var_id = 0
 def fresh(num_bits = 1):
 	"""Crée un nouveau fil, avec num_bits fils"""
 	global var_id
-	name = "l{}".format(var_id)
+	name = context[-1] + str(var_id)
 	var_id += 1
 	vars[name] = num_bits
 	return name

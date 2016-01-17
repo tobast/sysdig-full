@@ -8,7 +8,7 @@ def half_adder(source1, source2, s = None, c = None):
 	return (c, s)
 
 def incr(n, source, s = None, c = None):
-	"""renvoie source = 1"""
+	"""renvoie source + 1"""
 	if n == 1:
 		s, c = half_adder(nl.SELECT(1, source), nl.CONST(1), s, c)
 		return s, c
@@ -40,6 +40,7 @@ def full_adder_n(n, nappe1, nappe2, c_in, need_fl_V, \
 	return (s, c_out, fl_V)
 
 def alu(instr, useCarry, op1, op2, carryFlag, val = None, flags = None):
+	nl.push_context("alu")
 	"""calcule les opposés de op1 et op2 si (et seulement si) nécessaire"""
 	op1_1 = nl.XOR(op1, hel.wire_expand(64, nl.SELECT(3, instr)))
 	op2_1 = nl.XOR(op2, hel.wire_expand(64, nl.SELECT(1, instr)))
@@ -64,4 +65,5 @@ def alu(instr, useCarry, op1, op2, carryFlag, val = None, flags = None):
 	flags_1 = nl.CONCAT(flag_N, flag_Z)
 	flags_2 = nl.CONCAT(flags_1, flag_C)
 	flags = nl.CONCAT(flags_2, flag_V, flags)
+	nl.pop_context()
 	return (val, flags)

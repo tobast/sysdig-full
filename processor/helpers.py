@@ -7,6 +7,9 @@ def wire_expand(n, source, destr = None):
 	assert(destr == None or nl.get_size(destr) == n * nl.get_size(source))
 	if n == 1 and destr == None:
 		return source
+	elif n == 1:
+		return nl.WIRE(source, destr)
+	nl.push_context("wire_expand")
 	c = 1
 	k = 0
 	l = [source]
@@ -20,10 +23,12 @@ def wire_expand(n, source, destr = None):
 		c *= 2
 		k += 1
 	if 2 * c == n:
+		nl.pop_context()
 		return nl.CONCAT(l[-1], l[-1], destr)
 	u = l[bits[0]]
 	for i in range(1, len(bits)):
 		u = nl.CONCAT(u, l[bits[i]])
+	nl.pop_context()
 	return nl.CONCAT(u, l[k], destr)
 
 def expandedCst_1bit(bitpos, cst, i_bitwire, o_out = None):

@@ -42,6 +42,7 @@ def demux_n(n, l, source, addr):
 
 def registers(set_val, r1addr, r2addr, setaddr, value, r1 = None, r2 = None,
 	      pc = None):
+	nl.push_context("registers")
 	n = nl.get_size(value)
 	regs = []
 	for i in range(constants.REGISTERS.number):
@@ -53,6 +54,8 @@ def registers(set_val, r1addr, r2addr, setaddr, value, r1 = None, r2 = None,
 			reg = register(value, write_enable)
 		regs.append((write_enable, reg))
 	addr_size = nl.get_size(r1addr)
-	mux_n(addr_size, [r[1] for r in regs], r1addr, r1)
-	mux_n(addr_size, [r[1] for r in regs], r2addr, r2)
+	r1 = mux_n(addr_size, [r[1] for r in regs], r1addr, r1)
+	r2 = mux_n(addr_size, [r[1] for r in regs], r2addr, r2)
 	demux_n(addr_size, [r[0] for r in regs], set_val, setaddr)
+	nl.pop_context()
+	return r1, r2, pc
