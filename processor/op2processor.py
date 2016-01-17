@@ -13,7 +13,7 @@ def rightShifter(i_inputVal, i_shiftCode, wei):
 def barrelShifter(shifter, i_inputVal, i_shiftCode, i_shiftVal, o_val = None):
 	interWires = [i_inputVal] + [ fresh(64) for k in range(5) ] + [ o_val ]
 	for shiftWeight in range(6):
-		shifted = shifter(i_inputVal, i_shiftCode, shiftWeight)
+		shifted = shifter(interWires[shiftWeight], i_shiftCode, shiftWeight)
 		MUX(interWires[shiftWeight], shifted,\
 				hel.wire_expand(64, SELECT(shiftWeight+1, i_shiftVal)),\
 				interWires[shiftWeight+1])
