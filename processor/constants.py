@@ -34,9 +34,9 @@ class INSTRUCTIONS_FORMAT:
 
 class OP2_FRAME:
 	isRegister = 1
-	value = 2 # register name or explicit 8-bits constant
-	shift_opcode = 10
-	shift_val = 12
+	value = 2 # register name or explicit 16-bits constant
+	shift_opcode = 18
+	shift_val = 20
 class OP2_SHIFT_OPCODE:
 	LSL = 0b00
 	LSR = 0b10
