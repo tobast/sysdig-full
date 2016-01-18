@@ -49,8 +49,8 @@ def alu(instr, useCarry, op1, op2, carryFlag, val = None, flags = None):
 		carryFlag, useCarry)
 	arith, flag_C, flag_V = full_adder_n(64, op1, op2_1, c_in, True)
 	"""calcule la sortie pour les opérations booléennes seulement"""
-	eor = nl.XOR(op1, op2)
-	orr = nl.OR(op1, op2)
+	eor = nl.XOR(op1, op2_1)
+	orr = nl.OR(op1, op2_1)
 	oand = nl.AND(op1, op2_1)
 	boo_1 = nl.MUX(eor, orr, hel.wire_expand(64, nl.SELECT(4, instr)))
 	boo = nl.MUX(boo_1, oand, hel.wire_expand(64, nl.SELECT(3, instr)))
