@@ -6,7 +6,7 @@ type reg = int
 type op2val = ExplVal of int | RegVal of reg
 type shiftOp = LSL | LSR | ASR
 type barrelShift = {
-	instr : shiftOp ;
+	shiftInstr : shiftOp ;
 	shiftVal : int
 }
 
