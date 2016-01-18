@@ -36,3 +36,5 @@ type instruction = {
 	setFlags : bool
 }
 
+type prgm = instruction list
+
