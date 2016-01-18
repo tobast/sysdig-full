@@ -3,12 +3,15 @@
 exception Internal_error of string
 exception Lexical_error of string
 
+open Lexing
+open Parser
+
 let newline lexbuf =
 	let pos = lexbuf.lex_curr_p in
 	lexbuf.lex_curr_p <-
 		{ pos with pos_lnum = pos.pos_lnum + 1; pos_bol = pos.pos_cnum }
 
-let readConstant base cst =
+let readConstant (base:int) cst =
 	let inRange first last digit =
 		digit >= first && digit <= last in
 	let valOf first digit =
@@ -22,7 +25,7 @@ let readConstant base cst =
 			valOf 'A' digit
 		else
 			raise (Internal_error ("Unexpected character " ^
-					(string_of_char digit)^" while processing a base-"^
+					(String.make 1 digit)^" while processing a base-"^
 					(string_of_int base)^" number."))
 	in
 	let rec pow base = function
@@ -121,9 +124,9 @@ let readTextInstr =
 					[ Hashtbl.find flagsHT (String.sub ident fpos 2) ]
 				with Not_found ->
 					raise (Lexical_error ("Invalid conditionnal in "^ident))
-				), false
+				)
 			| 3 ->
-				(identEndMatch 2 fpos) :: (identEndMatch 1 (fpos+2))
+				(identEndMatch 2 fpos) @ (identEndMatch 1 (fpos+2))
 			| _ ->
 				raise (Lexical_error ("Instruction is waaay too long: "^ident))
 			) in
@@ -149,5 +152,6 @@ rule token = parse
 | (alpha+ as lab) ':'		{ Tlabel(lab) }
 | (['a'-'z'] alpha+ as lab)	{ Tident(lab) }
 | alphaUp+ as ident			{ readTextInstr ident }
+| eof						{ Teof }
 | _ as c					{ raise (Lexical_error ("Unexpected character "^
 								c^".")) }

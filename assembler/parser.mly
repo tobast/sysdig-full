@@ -1,17 +1,17 @@
-{
+%{
 	open Ast
-}
+%}
 
-%token TinstrADD|TinstrADC|TinstrSUB|TinstrSBC|TinstrRSB|TinstrRSC|TinstrAND|
-	TinstrEOR|TinstrORR|TinstrBIC|TinstrCMP|TinstrCMN|TinstrTST|TinstrTEQ|
-	TinstrMOV|TinstrMVN|TinstrLDR|TinstrSTR|TinstrJMP|TinstrLSL|TinstrLSR|
+%token TinstrADD TinstrADC TinstrSUB TinstrSBC TinstrRSB TinstrRSC TinstrAND 
+	TinstrEOR TinstrORR TinstrBIC TinstrCMP TinstrCMN TinstrTST TinstrTEQ 
+	TinstrMOV TinstrMVN TinstrLDR TinstrSTR TinstrJMP TinstrLSL TinstrLSR 
 	TinstrASR
-%token TflagEQ|TflagNE|TflagCS|TflagCS|TflagCC|TflagCC|TflagMI|TflagPL|TflagVS|
-	TflagVC|TflagHI|TflagLS|TflagGE|TflagLT|TflagGT|TflagLE|TflagAL|TflagNV
-%token Tendl | Tcomma
+%token TflagEQ TflagNE TflagCS TflagCC TflagMI TflagPL TflagVS TflagVC TflagHI
+	TflagLS TflagGE TflagLT TflagGT TflagLE TflagAL TflagNV
+%token Tendl Tcomma Tsetflags Teof
 %token <int> Treg
 %token <int> Tval
-%token <string> Tlabel
+%token <string> Tlabel Tident
 
 %start prgm
 %type <Ast.prgm> prgm
@@ -19,7 +19,7 @@
 %%
 
 prgm:
-| instrs = separated_list(instr, Tendl)			{ instrs }
+| instrs = separated_list(Tendl, instr) ; Teof				{ instrs }
 ;
 
 instr:
@@ -28,21 +28,21 @@ instr:
 								{ { instr = Arith(ins,dest,o1,o2) ;
 								    cond = cnd ;
 								    setFlags = sf } }
-| ins = compOp ; cnd = cond ; sf = setflags ;
+| ins = compOp ; cnd = cond ;
 	o1=Treg; Tcomma; o2=op2
 								{ { instr = Compare(ins,o1,o2) ;
 								    cond = cnd ;
-								    setFlags = sf } }
-| ins = moveOp ; cnd = cond ; sf = setflags ;
+								    setFlags = true } }
+| ins = moveOp ; cnd = cond ;
 	dest=Treg; Tcomma; o2=op2
-								{ { instr = Move(ins,o1,o2) ;
+								{ { instr = Move(ins,dest,o2) ;
 								    cond = cnd ;
-								    setFlags = sf } }
-| ins = memOp ; cnd = cond ; sf = setflags ;
+								    setFlags = false } }
+| ins = memOp ; cnd = cond ;
 	o1=Treg; Tcomma; o2=op2
 								{ { instr = Memory(ins,o1,o2) ;
 								    cond = cnd ;
-								    setFlags = sf } }
+								    setFlags = false } }
 | ins = TinstrJMP ; cnd = cond ; lab = Tident
 								{ { instr = JMP(lab) ;
 								    cond = cnd ;
@@ -50,6 +50,30 @@ instr:
 | lab = Tlabel					{ { instr = Label(lab) ;
 									cond = AL ;
 									setFlags = false } }
+;
+
+cond:
+|TflagEQ						{ EQ }
+|TflagNE						{ NE }
+|TflagCS						{ CS }
+|TflagCC						{ CC }
+|TflagMI						{ MI }
+|TflagPL						{ PL }
+|TflagVS						{ VS }
+|TflagVC						{ VC }
+|TflagHI						{ HI }
+|TflagLS						{ LS }
+|TflagGE						{ GE }
+|TflagLT						{ LT }
+|TflagGT						{ GT }
+|TflagLE						{ LE }
+|TflagAL						{ AL }
+|TflagNV						{ NV }
+|								{ AL }
+;
+setflags:
+| s = boption(Tsetflags)		{ s }
+;
 
 arithOp:
 | TinstrADD		{ ADD }
@@ -62,27 +86,34 @@ arithOp:
 | TinstrEOR		{ EOR }
 | TinstrORR		{ ORR }
 | TinstrBIC		{ BIC }
+;
 compOp:
 | TinstrCMP		{ CMP }
 | TinstrCMN		{ CMN }
 | TinstrTST		{ TST }
 | TinstrTEQ		{ TEQ }
+;
 moveOp:
 | TinstrMOV		{ MOV }
 | TinstrMVN		{ MVN }
+;
 memOp:
 | TinstrLDR		{ LDR }
 | TinstrSTR		{ STR }
+;
 
 op2:
 | v = Tval ; sh = bshifter			{ { value = ExplVal(v) ; shift = sh }}
 | r = Treg ; sh = bshifter			{ { value = RegVal(r) ; shift = sh }}
+;
 
 bshifter:
 | 									{ { shiftInstr= LSL ; shiftVal = 0} }
 | Tcomma ; op=shiftOp ; v = Tval	{ { shiftInstr= op ; shiftVal = v} }
+;
 
 shiftOp:
 | TinstrLSL							{ LSL }
 | TinstrLSR							{ LSR }
 | TinstrASR							{ ASR }
+;
