@@ -24,14 +24,14 @@ def mux_n(n, l, addr, destr = None):
 	k = nl.get_size(l[0])
 	if n == 1:
 		return nl.MUX(l[0], l[1], helpers.wire_expand(k,
-				nl.select(1, addr)), destr)
+				nl.SELECT(1, addr)), destr)
 	z = 1 << (n - 1)
 	return nl.MUX(mux_n(n - 1, l[:z], addr), mux_n(n - 1, l[z:], addr),
-		      helpers.wire_expand(k, nl.select(n, addr)), destr)
+		      helpers.wire_expand(k, nl.SELECT(n, addr)), destr)
 
 def demux_n(n, l, source, addr):
 	k = nl.get_size(source)
-	u = helpers.wire_expand(k, nl.select(n, addr))
+	u = helpers.wire_expand(k, nl.SELECT(n, addr))
 	z = 1 << (n - 1)
 	if n == 1:
 		nl.AND(u, source, l[1])
@@ -42,17 +42,20 @@ def demux_n(n, l, source, addr):
 
 def registers(set_val, r1addr, r2addr, setaddr, value, r1 = None, r2 = None,
 	      pc = None):
+	nl.push_context("registers")
 	n = nl.get_size(value)
 	regs = []
-	for i in range(constants.REGISTER.number):
+	for i in range(constants.REGISTERS.number):
 		write_enable = nl.fresh()
-		if i == constants.REGISTER.pc:
+		if i == constants.REGISTERS.pc:
 			pc = register_pc(value, write_enable, pc)
 			reg = pc
 		else:
 			reg = register(value, write_enable)
 		regs.append((write_enable, reg))
 	addr_size = nl.get_size(r1addr)
-	mux_n(addr_size, [r[1] for r in regs], r1addr, r1)
-	mux_n(addr_size, [r[1] for r in regs], r2addr, r2)
+	r1 = mux_n(addr_size, [r[1] for r in regs], r1addr, r1)
+	r2 = mux_n(addr_size, [r[1] for r in regs], r2addr, r2)
 	demux_n(addr_size, [r[0] for r in regs], set_val, setaddr)
+	nl.pop_context()
+	return r1, r2, pc

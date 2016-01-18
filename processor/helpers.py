@@ -7,6 +7,9 @@ def wire_expand(n, source, destr = None):
 	assert(destr == None or nl.get_size(destr) == n * nl.get_size(source))
 	if n == 1 and destr == None:
 		return source
+	elif n == 1:
+		return nl.WIRE(source, destr)
+	nl.push_context("wire_expand")
 	c = 1
 	k = 0
 	l = [source]
@@ -20,13 +23,15 @@ def wire_expand(n, source, destr = None):
 		c *= 2
 		k += 1
 	if 2 * c == n:
+		nl.pop_context()
 		return nl.CONCAT(l[-1], l[-1], destr)
 	u = l[bits[0]]
 	for i in range(1, len(bits)):
 		u = nl.CONCAT(u, l[bits[i]])
+	nl.pop_context()
 	return nl.CONCAT(u, l[k], destr)
 
-def expandedCst_1bit(bitpos, cst, i_bitwire, o_out):
+def expandedCst_1bit(bitpos, cst, i_bitwire, o_out = None):
 	""" Inserts a wire into a 64-sized array of `cst', replacing the wire at
 	position `bitpos' with `i_bitwire' """
 	if bitpos > 1:
@@ -34,12 +39,12 @@ def expandedCst_1bit(bitpos, cst, i_bitwire, o_out):
 			lowOut = o_out
 		else:
 			lowOut = None
-		lowWei = CONCAT(wire_expand(bitpos-1, CONST(cst)),\
+		lowWei = nl.CONCAT(wire_expand(bitpos-1, nl.CONST(cst)),\
 				i_bitwire, lowOut)
 	else:
-		lowWei = CONST(cst)
+		lowWei = nl.CONST(cst)
 	
 	if bitpos == 64:
 		return lowWei
-	return CONCAT(lowWei, wire_expand(64-bitpos, CONST(cst)), o_out)
+	return nl.CONCAT(lowWei, wire_expand(64-bitpos, nl.CONST(cst)), o_out)
 

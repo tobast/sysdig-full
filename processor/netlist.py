@@ -4,11 +4,18 @@ instrs = []
 inputs = []
 outputs = []
 
+context = ["l"]
+
+def push_context(name):
+	context.append(name)
+def pop_context():
+	context.pop()
+
 var_id = 0
 def fresh(num_bits = 1):
 	"""Crée un nouveau fil, avec num_bits fils"""
 	global var_id
-	name = "l{}".format(var_id)
+	name = context[-1] + str(var_id)
 	var_id += 1
 	vars[name] = num_bits
 	return name
@@ -30,6 +37,7 @@ def CONST(value, destr = None):
 		destr = fresh()
 	assert(value == 0 or value == 1)
 	instrs.append("{} = {}".format(destr, value))
+	return destr
 
 def WIRE(source, destr = None):
 	if destr == None:
@@ -99,31 +107,32 @@ def RAM(addr_size, word_size, read_addr, write_enable, write_addr, data, \
 		destr = None):
 	if destr == None:
 		destr = fresh(word_size)
-	assert(vars[addr] == addr_size and vars[destr] == vars[data] == word_size
-		   and vars[write_enable] == 1)
-	instrs.append("{} = RAM {} {} {} {} {} {}".format(destr, addr_size, word_size,
-									read_addr, write_enable, write_addr, data))
+	assert(vars[read_addr] == vars[write_addr] == addr_size)
+	assert(vars[destr] == vars[data] == word_size)
+	assert(vars[write_enable] == 1)
+	instrs.append("{} = RAM {} {} {} {} {} {}".format(destr, addr_size,\
+			word_size, read_addr, write_enable, write_addr, data))
 	return destr
 
 def CONCAT(source1, source2, destr = None):
 	if destr == None:
 		destr = fresh(vars[source1] + vars[source2])
 	assert(vars[destr] == vars[source1] + vars[source2])
-	instrs.append("{} = CONCAT {} {}".format(destr, source1, source2))
+	instrs.append("{} = CONCAT {} {}".format(destr, source2, source1))
 	return destr
 
 def SLICE(i, j, source, destr = None):
 	if destr == None:
 		destr = fresh(j - i + 1)
 	assert(vars[destr] == j - i + 1 and 1 <= i <= j <= vars[source])
-	instrs.append("{} = SLICE {} {} {}".format(destr, i, j, source))
+	instrs.append("{} = SLICE {} {} {}".format(destr, vars[source] - j, vars[source] - i, source))
 	return destr
 
 def SELECT(index, source, destr = None):
 	if destr == None:
 		destr = fresh()
 	assert(vars[destr] == 1 and 1 <= index <= vars[source])
-	instrs.append("{} = SELECT {} {}".format(destr, index, source))
+	instrs.append("{} = SELECT {} {}".format(destr, vars[source] - index, source))
 	return destr
 
 def print_netlist():
