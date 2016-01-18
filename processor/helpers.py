@@ -31,6 +31,24 @@ def wire_expand(n, source, destr = None):
 	nl.pop_context()
 	return nl.CONCAT(u, l[k], destr)
 
+def or_all(source, destr = None):
+        n = nl.get_size(source)
+        if n == 1:
+                return nl.WIRE(source, destr)
+        nl.push_context("or_all")
+        c = 1
+        while 2 * c < n:
+                c *= 2
+        w = source
+        if 2 * c > n:
+                w = nl.CONCAT(wire_expand(2 * c - n, nl.CONST(0)), source)
+        while c > 1:
+                w = nl.OR(nl.SLICE(1, c, w), nl.SLICE(c + 1, 2 * c, w))
+                c //= 2
+        destr = nl.OR(nl.SLICE(1, c, w), nl.SLICE(c + 1, 2 * c, w), destr)
+        nl.pop_context()
+        return destr
+
 def expandedCst_1bit(bitpos, cst, i_bitwire, o_out = None):
 	""" Inserts a wire into a 64-sized array of `cst', replacing the wire at
 	position `bitpos' with `i_bitwire' """
