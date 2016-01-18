@@ -89,7 +89,7 @@ def main():
 	### OP2_PROCESSOR ###
 	class op2processorPin:
 		i_op2 = SLICE(constants.OPCODE_FRAME.op2,\
-				constants.OPCODE_FRAME.op2+16,\
+				constants.OPCODE_FRAME.op2+24,\
 				opcodeGetPin.o_opcode)
 		i_regVal = registersPin.o_reg2
 		o_reqAddr = registersPin.i_reg2addr

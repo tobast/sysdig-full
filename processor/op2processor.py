@@ -27,9 +27,9 @@ def op2processor(i_op2, i_reqVal, o_reqAddr = None, o_val = None):
 	o_reqAddr = SLICE(constants.OP2_FRAME.value, constants.OP2_FRAME.value + 3,\
 			i_op2, o_reqAddr)
 	numCst = CONCAT(\
-			SLICE(constants.OP2_FRAME.value, constants.OP2_FRAME.value + 7,\
+			SLICE(constants.OP2_FRAME.value, constants.OP2_FRAME.value + 15,\
 				i_op2),\
-			hel.wire_expand(64-8, CONST(0)))
+			hel.wire_expand(64-16, CONST(0)))
 	interValue = MUX(\
 			numCst,\
 			i_reqVal,\
