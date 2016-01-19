@@ -113,6 +113,7 @@ let readTextInstr =
 			) in
 		
 		let rec identEndMatch len fpos = (match len with
+			| 0 -> []
 			| 1 ->
 				if ident.[fpos] = 'S' then
 					[ Tsetflags ]
