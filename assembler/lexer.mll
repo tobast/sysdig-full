@@ -141,17 +141,29 @@ let bits = ['0'-'1']
 let alpha = ['a'-'z' 'A'-'Z']
 let alphaUp = ['A'-'Z']
 
-rule token = parse
-| '\n'						{ newline lexbuf ; Tendl }
-| whitespace+				{ token lexbuf }
-| ','						{ Tcomma }
-| '#'(digits+ as num)		{ Tval(readConstant 10 num) }
-| "#0x"(hexdigits+ as num)	{ Tval(readConstant 16 num) }
-| "#0b"(bits+ as num)		{ Tval(readConstant 2 num) }
-| "%r"(digits+ as regid)	{ Treg(readRegister regid) }
-| (alpha+ as lab) ':'		{ Tlabel(lab) }
-| (['a'-'z'] alpha+ as lab)	{ Tident(lab) }
+rule tokens = parse
+| '\n'						{ newline lexbuf ; [ Tendl ] }
+| whitespace+				{ tokens lexbuf }
+| ','						{ [ Tcomma ] }
+| '#'(digits+ as num)		{ [ Tval(readConstant 10 num) ] }
+| "#0x"(hexdigits+ as num)	{ [ Tval(readConstant 16 num) ] }
+| "#0b"(bits+ as num)		{ [ Tval(readConstant 2 num) ] }
+| "%r"(digits+ as regid)	{ [ Treg(readRegister regid) ] }
+| (alpha+ as lab) ':'		{ [ Tlabel(lab) ] }
+| (['a'-'z'] alpha+ as lab)	{ [ Tident(lab) ] }
 | alphaUp+ as ident			{ readTextInstr ident }
-| eof						{ Teof }
+| eof						{ [ Teof ] }
 | _ as c					{ raise (Lexical_error ("Unexpected character "^
-								c^".")) }
+								(String.make 1 c)^".")) }
+
+{
+let token =
+	let buffer = ref [] in
+	(fun lexbuf ->
+		if !buffer = [] then
+			buffer := tokens lexbuf;
+		let out = List.hd !buffer in
+		buffer := List.tl !buffer ;
+		out
+	)
+}
