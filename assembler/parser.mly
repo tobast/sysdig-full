@@ -19,7 +19,7 @@
 %%
 
 prgm:
-| instrs = separated_list(Tendl, instr) ; Teof				{ instrs }
+| Tendl* ; instrs = list(terminated(instr, Tendl*)) ; Teof	{ instrs }
 ;
 
 instr:
