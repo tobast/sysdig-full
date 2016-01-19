@@ -21,7 +21,7 @@ class REGISTERS:
 	pc = 0
 	number = 16
 	inputs = [1]
-	outputs = [0, 1, 2, 3]
+	outputs = [2, 3]
 
 class INSTRUCTIONS_FORMAT:
 	ADD = 0b0000
