@@ -15,7 +15,9 @@ def register_pc(data, write_enable, destr = None):
 	n = nl.get_size(data)
 	u = nl.fresh(n)
 	destr = nl.REG(u, destr)
+	nl.push_context("incr")
 	incremented, _ = alu.incr(n, destr)
+	nl.pop_context()
 	write_n = helpers.wire_expand(n, write_enable)
 	nl.MUX(incremented, data, write_n, u)
 	return destr
@@ -50,10 +52,16 @@ def registers(set_val, r1addr, r2addr, setaddr, value, r1 = None, r2 = None,
 		if i == constants.REGISTERS.pc:
 			pc = register_pc(value, write_enable, pc)
 			reg = pc
+		elif i in constants.REGISTERS.inputs:
+			reg = nl.fresh(n)
+			nl.input(reg)
 		else:
 			reg = register(value, write_enable)
+		if i in constants.REGISTERS.outputs:
+			nl.output(reg)
 		regs.append((write_enable, reg))
 	addr_size = nl.get_size(r1addr)
+	assert(1 << addr_size == constants.REGISTERS.number)
 	r1 = mux_n(addr_size, [r[1] for r in regs], r1addr, r1)
 	r2 = mux_n(addr_size, [r[1] for r in regs], r2addr, r2)
 	demux_n(addr_size, [r[0] for r in regs], set_val, setaddr)

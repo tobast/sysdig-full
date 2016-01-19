@@ -13,6 +13,14 @@ import result_selector
 import constants
 from netlist import *
 
+ENABLE_DEBUG = False
+def show(pin, name):
+	if ENABLE_DEBUG:
+		push_context(name)
+		o = fresh(get_size(pin))
+		output(WIRE(pin, o))
+		pop_context()
+
 def main():
 	### OPCODE_GETTER ###
 	class opcodeGetPin:
@@ -21,10 +29,14 @@ def main():
 		o_flagSelect = fresh(4)
 		o_opcode = fresh(64)
 
+	show(opcodeGetPin.i_pctr, "pc")
+	show(opcodeGetPin.o_opcode, "opcode")
+
 	opcodeGetter.opcodeGetter(opcodeGetPin.i_pctr,\
 		opcodeGetPin.i_flagValue,\
 		opcodeGetPin.o_flagSelect,\
 		opcodeGetPin.o_opcode)
+
 	
 	### ALU ###
 	class aluPin:
@@ -37,6 +49,11 @@ def main():
 		i_carryFlag = fresh(1)
 		o_val = fresh(64)
 		o_flags = fresh(4)
+
+	show(aluPin.i_op1, "alu_op1")
+	show(aluPin.i_op2, "alu_op2")
+	show(aluPin.i_instr, "alu_instr")
+	show(aluPin.o_val, "alu_val")
 
 	alu.alu(aluPin.i_instr,\
 		aluPin.i_useCarry,\
@@ -59,6 +76,13 @@ def main():
 		o_reg2 = fresh(64)
 		o_pctr = opcodeGetPin.i_pctr
 
+	show(registersPin.i_setVal, "writeResult")
+	show(registersPin.i_reg1addr, "r1addr")
+	show(registersPin.i_reg2addr, "r2addr")
+	show(registersPin.i_destReg, "destReg")
+	show(registersPin.i_value, "value")
+	
+
 	registers.registers(
 		registersPin.i_setVal,\
 		registersPin.i_reg1addr,\
@@ -78,6 +102,10 @@ def main():
 		i_regVal = registersPin.o_reg1
 		o_reqAddr = registersPin.i_reg1addr
 		o_val = aluPin.i_op1
+
+	show(op1processorPin.i_op1, "op1a")
+	show(op1processorPin.o_reqAddr, "op1b")
+	show(op1processorPin.i_op1cst, "op1cst")
 	
 	op1processor.op1processor(
 		op1processorPin.i_op1,\

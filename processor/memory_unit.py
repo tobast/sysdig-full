@@ -11,7 +11,7 @@ def memory_unit(instr, value, addr, result = None):
 	addr = nl.SLICE(1, 16, addr)
 	if UNUSED_ADDR_ZERO:
 		addr = nl.AND(addr, helpers.wire_expand(16, is_memory))
-	uu = nl.fresh(64)
+	uu = nl.fresh(16)
 	nl.pop_context()
 	return nl.RAM(16, 64, addr, we, nl.WIRE(addr, uu), value, result)
 	

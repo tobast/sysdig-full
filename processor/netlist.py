@@ -42,7 +42,6 @@ def CONST(value, destr = None):
 def WIRE(source, destr = None):
 	if destr == None:
 		return source
-	destr = fresh(vars[source])
 	assert(vars[source] == vars[destr])
 	instrs.append("{} = {}".format(destr, source))
 	return destr    
