@@ -75,7 +75,7 @@ let op2_value = function
 
 let shift_op_instr  = function
   | LSL -> 0L
-  | LSR -> 1L
+  | LSR -> 2L
   | ASR -> 3L
 
 let op2_bin op2 =

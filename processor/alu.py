@@ -42,20 +42,20 @@ def full_adder_n(n, nappe1, nappe2, c_in, need_fl_V, \
 def alu(instr, useCarry, op1, op2, carryFlag, val = None, flags = None):
 	nl.push_context("alu")
 	"""calcule les opposés de op1 et op2 si (et seulement si) nécessaire"""
-	op1_1 = nl.XOR(op1, hel.wire_expand(64, nl.SELECT(3, instr)))
-	op2_1 = nl.XOR(op2, hel.wire_expand(64, nl.SELECT(1, instr)))
+	op1_1 = nl.XOR(op1, hel.wire_expand(64, nl.SELECT(2, instr)))
+	op2_1 = nl.XOR(op2, hel.wire_expand(64, nl.SELECT(4, instr)))
 	"""calcule la sortie pour les opérations arithmétiques seulement"""
-	c_in = nl.MUX(nl.OR(nl.SELECT(1, instr), nl.SELECT(3, instr)), \
+	c_in = nl.MUX(nl.OR(nl.SELECT(4, instr), nl.SELECT(2, instr)), \
 		carryFlag, useCarry)
-	arith, flag_C, flag_V = full_adder_n(64, op1, op2_1, c_in, True)
+	arith, flag_C, flag_V = full_adder_n(64, op1_1, op2_1, c_in, True)
 	"""calcule la sortie pour les opérations booléennes seulement"""
 	eor = nl.XOR(op1, op2_1)
 	orr = nl.OR(op1, op2_1)
 	oand = nl.AND(op1, op2_1)
-	boo_1 = nl.MUX(eor, orr, hel.wire_expand(64, nl.SELECT(4, instr)))
-	boo = nl.MUX(boo_1, oand, hel.wire_expand(64, nl.SELECT(3, instr)))
+	boo_1 = nl.MUX(eor, orr, hel.wire_expand(64, nl.SELECT(1, instr)))
+	boo = nl.MUX(boo_1, oand, hel.wire_expand(64, nl.SELECT(2, instr)))
 	"""sélectionne la bonne sortie parmi les deux propositions"""
-	val = nl.MUX(arith, boo, hel.wire_expand(64, nl.SELECT(2, instr)), val)
+	val = nl.MUX(arith, boo, hel.wire_expand(64, nl.SELECT(3, instr)), val)
 	"""détermine les flags"""
 	n_flag_Z = hel.or_all(val)
 	flag_Z = nl.NOT(n_flag_Z)
