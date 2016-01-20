@@ -145,6 +145,7 @@ let alphaUp = ['A'-'Z']
 rule tokens = parse
 | '\n'						{ newline lexbuf ; [ Tendl ] }
 | whitespace+				{ tokens lexbuf }
+| "//" [^'\n']+			{ tokens lexbuf }
 | ','						{ [ Tcomma ] }
 | "#0x"(hexdigits+ as num)	{ [ Tval(readConstant 16 num) ] }
 | "#0b"(bits+ as num)		{ [ Tval(readConstant 2 num) ] }
