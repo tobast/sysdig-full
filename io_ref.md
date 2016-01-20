@@ -32,7 +32,7 @@ Time word
 The time word consists in the following bytes (from most significant to
 least significant) :
 
-[H][H][M][M][S][S]
+[_][_][H][H][M][M][S][S]
 
 Date word
 ====
