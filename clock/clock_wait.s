@@ -52,7 +52,7 @@ loop:
 	EOR %r02, %r02, #0x78 // {7} ^ {8}
 	// Maintenant, on a Z ssi l'année est bissextile
 	//  et on est en février
-	ADDEQ %r10 #1
+	ADDEQ %r10, %r10, #1
 	ADD %r00, %r00, %r01 // Wait
 	EOR %r02, %r02, #0x10 // {8} ^ {9}
 	// On ajoute une minute
@@ -80,7 +80,7 @@ loop:
 	ADD %r00, %r00, %r01 // Wait
 	EOR %r02, %r02, #0x0b // {4} ^ {5}
 	// On incrémente les jours
-	ADDEQ %r06, #1
+	ADDEQ %r06, %r06, #1
 	ADD %r00, %r00, %r01 // Wait
 	EOR %r02, %r02, #0x10 // {5} ^ {6}
 	// Jours == jours_mois + 1 ?
@@ -92,7 +92,7 @@ loop:
 	ADD %r00, %r00, %r01 // Wait
 	EOR %r02, %r02, #0x78 // {7} ^ {8}
 	// On incrémente les mois
-	ADDEQ %r07, #1
+	ADDEQ %r07, %r07, #1
 	ADD %r00, %r00, %r01 // Wait
 	EOR %r02, %r02, #0x10 // {8} ^ {9}
 	// Mois == 13 ?
