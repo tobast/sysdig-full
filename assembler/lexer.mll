@@ -20,9 +20,9 @@ let readConstant (base:int) cst =
 		if inRange '0' '9' digit then
 			valOf '0' digit
 		else if inRange 'a' 'f' digit then
-			valOf 'a' digit
+			(valOf 'a' digit) + 10
 		else if inRange 'A' 'F' digit then
-			valOf 'A' digit
+			(valOf 'A' digit) + 10
 		else
 			raise (Internal_error ("Unexpected character " ^
 					(String.make 1 digit)^" while processing a base-"^
@@ -36,7 +36,7 @@ let readConstant (base:int) cst =
 		x * x * (if n mod 2 = 0 then 1 else base) in
 
 	let strlen = String.length cst in
-	if pow base strlen >= (1 lsl 16) then
+	if pow base strlen > (1 lsl 16) then
 		raise (Lexical_error "Explicit constant is too large.");
 
 	let rec doRead cNum = function
@@ -146,9 +146,9 @@ rule tokens = parse
 | '\n'						{ newline lexbuf ; [ Tendl ] }
 | whitespace+				{ tokens lexbuf }
 | ','						{ [ Tcomma ] }
-| '#'(digits+ as num)		{ [ Tval(readConstant 10 num) ] }
 | "#0x"(hexdigits+ as num)	{ [ Tval(readConstant 16 num) ] }
 | "#0b"(bits+ as num)		{ [ Tval(readConstant 2 num) ] }
+| '#'(digits+ as num)		{ [ Tval(readConstant 10 num) ] }
 | "%r"(digits+ as regid)	{ [ Treg(readRegister regid) ] }
 | (alpha+ as lab) ':'		{ [ Tlabel(lab) ] }
 | (['a'-'z'] alpha+ as lab)	{ [ Tident(lab) ] }
