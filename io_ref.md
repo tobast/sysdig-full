@@ -12,9 +12,13 @@ _gfedcba
 where a is the least significant bit, and the segments are as follows:
 
 |-a-|
+
 f   b
+
 |-g-|
+
 e	c
+
 |-d-|
 
 Words
