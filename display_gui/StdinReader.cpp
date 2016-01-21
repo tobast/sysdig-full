@@ -29,7 +29,7 @@ void StdinReader::getResult()
 
 void StdinReader::update()
 {
-    for(int i=0; i < 16 * 5; i++)
+    for(int i=0; i < 16 * 7; i++) // ignore 6 cycles out of 7
         buffer[i & 0xf] = getchar();
     if(resultRequested) {
         //unsigned char out[16]; // Copying to avoid problems of shared memory
