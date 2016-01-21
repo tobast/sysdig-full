@@ -18,6 +18,16 @@
 	MOV %r07, %r01 // Mois
 	MOV %r08, %r01 // Années
 	MOV %r09, %r01 // Siècles
+	// Si %r15 < 0, on avait /dev/null comme entrée
+	// Dans ce cas, on initialise à 0
+	TST %r15, %r15
+	MOVMI %r15, #0
+	MOVMI %r04, #0
+	MOVMI %r05, #0
+	MOVMI %r06, #1
+	MOVMI %r07, #1
+	MOVMI %r08, #0
+	MOVMI %r09, #0
 	JMP init
 
 // La boucle principale :
@@ -551,6 +561,8 @@ init:
 	STR %r11, #98
 	MOV %r11, #0x6f6f // 99
 	STR %r11, #99
+	MOV %r11, #1
+	STR %r11, #100
 	MOV %r11, #32
 	STR %r11, #101
 	STR %r11, #103
