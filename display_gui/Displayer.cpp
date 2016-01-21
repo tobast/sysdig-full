@@ -48,8 +48,6 @@ void Displayer::updateLCD(StdinResult res)
     lcd->setDigit(2, res[12]); // Month_0
     lcd->setDigit(3, res[13]); // Month_1
 
-    stdinReader->flush();
-
     int elapsed = time.elapsed();
     if(elapsed < 1000/30) // 30 FPS
         QTimer::singleShot(17-elapsed, this, SIGNAL(requestValues()));
