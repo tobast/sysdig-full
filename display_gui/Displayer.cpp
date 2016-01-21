@@ -51,7 +51,7 @@ void Displayer::updateLCD(StdinResult res)
     stdinReader->flush();
 
     int elapsed = time.elapsed();
-    if(elapsed < 17) // 60 FPS
+    if(elapsed < 1000/30) // 30 FPS
         QTimer::singleShot(17-elapsed, this, SIGNAL(requestValues()));
     else
         emit requestValues();
