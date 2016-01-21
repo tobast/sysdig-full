@@ -28,6 +28,10 @@ let comp_op_instr = function
   | TST -> (0b0110L, 0L, true)
   | TEQ -> (0b0100L, 0L, true)
 
+let bool_to_bin = function
+  | true  -> 1L
+  | false -> 0L
+
 (* dans la suite, on donne dans l'ordre : 
     - (instr, useCarry, setFlags)
 	- destRegister
@@ -44,12 +48,9 @@ let code_instr_separate = function
   | Move(op, reg_dest, op2) 			->
      (mov_op_instr op, reg_dest, 0, 1L, op2, 1L)
   | Memory(op, reg_mem, op2) 			->
-     (mem_op_instr op, reg_mem, reg_mem, 0L, op2, 1L)
+     (mem_op_instr op, reg_mem, reg_mem, 0L, op2,
+	bool_to_bin (op = LDR))
   | _ -> assert false
-
-let bool_to_bin = function
-  | true  -> 1L
-  | false -> 0L
 
 let condType_to_int = function
   | EQ -> 0L
