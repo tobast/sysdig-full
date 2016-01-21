@@ -4,6 +4,8 @@
 #include <QVBoxLayout>
 #include <QWidget>
 #include <QThread>
+#include <QTimer>
+#include <QTime>
 
 #include "FullLcd.h"
 #include "StdinReader.h"

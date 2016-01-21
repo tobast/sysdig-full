@@ -13,7 +13,8 @@ Displayer::Displayer(QWidget *parent) :
             this, SLOT(updateLCD(StdinResult)));
     connect(this, SIGNAL(requestValues()), stdinReader, SLOT(getResult()));
     readerThread->start();
-    stdinReader->getResult();
+
+    QTimer::singleShot(0, stdinReader, SLOT(getResult()));
 }
 
 Displayer::~Displayer()
@@ -34,6 +35,9 @@ void Displayer::buildWidget()
 
 void Displayer::updateLCD(StdinResult res)
 {
+    QTime time;
+    time.start();
+
     for(int pos=2; pos < 8; pos++) // Time
         lcd->setDigit(6+pos, res[pos]);
     for(int pos=8; pos < 12; pos++) // Year
@@ -45,5 +49,10 @@ void Displayer::updateLCD(StdinResult res)
     lcd->setDigit(3, res[13]); // Month_1
 
     stdinReader->flush();
-    emit requestValues();
+
+    int elapsed = time.elapsed();
+    if(elapsed < 17) // 60 FPS
+        QTimer::singleShot(17-elapsed, this, SIGNAL(requestValues()));
+    else
+        emit requestValues();
 }

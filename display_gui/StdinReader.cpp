@@ -1,24 +1,43 @@
 #include "StdinReader.h"
 
 
-StdinReader::StdinReader(QObject *parent) : QObject(parent)
+StdinReader::StdinReader(QObject *parent) :
+    QObject(parent), resultRequested(false)
 {
     qRegisterMetaType<StdinResult>("StdinResult");
+    buffer = new unsigned char[16];
+    sharedBuffer = new unsigned char[16];
+    connect(this, SIGNAL(nextUpdate()), this, SLOT(update()));
+    QTimer::singleShot(0, this, SLOT(update()));
+}
+
+StdinReader::~StdinReader()
+{
+    delete[] buffer;
+    delete[] sharedBuffer;
 }
 
 void StdinReader::flush()
 {
-    fflush(stdin);
+    // @DEPRECATED
 }
 
 void StdinReader::getResult()
 {
-    unsigned char out[16];
-    //out.resize(16);
-    for(int i=0; i < 16; i++) {
-        do {
-            scanf("%c", &(out[i]));
-        } while(out[i] == '\n');
+    resultRequested = true;
+}
+
+void StdinReader::update()
+{
+    for(int i=0; i < 16; i++)
+        buffer[i] = getchar();
+    if(resultRequested) {
+        //unsigned char out[16]; // Copying to avoid problems of shared memory
+        // (Remember, this is running in a separated thread)
+        for(int i=0; i < 16; i++)
+            sharedBuffer[i] = buffer[i];
+        resultRequested = false;
+        emit hasResult(sharedBuffer);
     }
-    emit hasResult(out);
+    QTimer::singleShot(0, this, SLOT(update()));
 }
