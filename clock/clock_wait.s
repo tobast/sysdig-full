@@ -11,7 +11,13 @@
 // Buffer de sortie 2 : %r13
 
 // Initialisation
-
+	MOV %r15, %r01 // Secondes
+	MOV %r04, %r01 // Minutes
+	MOV %r05, %r01 // Heures
+	MOV %r06, %r01 // Jours
+	MOV %r07, %r01 // Mois
+	MOV %r08, %r01 // Années
+	MOV %r09, %r01 // Siècles
 	JMP init
 
 // La boucle principale :
@@ -22,7 +28,7 @@
 loop:
 	ADD %r00, %r00, %r01 // Wait
 	EOR %r02, %r02, #0x39 // {0} ^ {1}
-	MOV %r12, #0x3939 // {00}
+	MOV %r12, #0x3f3f // {00}
 	ADD %r00, %r00, %r01 // Wait
 	EOR %r02, %r02, #0x5d // {1} ^ {2}
 	// Début du calcul du nombre de jours dans le mois
@@ -234,20 +240,178 @@ loop:
 	// Et c'est reparti !
 	JMP loop
 
+// Comme la boucle, mais on fait toutes les instructions au début
+loopinit:
+	MOV %r12, #0x3f3f // {00}
+	ADD %r11, %r07, #100
+	LDR %r10, %r11
+	ADDS %r11, %r08, #0
+	MOVEQ %r11, %r09
+	TST %r11, #3
+	TEQEQ %r07, #2
+	ADDEQ %r10, %r10, #1
+	ADD %r04, %r04, #1
+	TEQ %r04, #60
+	MOVEQ %r04, #0
+	ADDEQ %r05, %r05, #1
+	TEQ %r05, #24
+	MOVEQ %r05, #0
+	ADDEQ %r06, %r06, #1
+	TEQ %r06, %r10
+	MOVEQ %r06, #1
+	ADDEQ %r07, %r07, #1
+	TEQ %r07, #13
+	MOVEQ %r07, #1
+	ADDEQ %r08, %r08, #1	
+	TEQ %r08, #100
+	MOVEQ %r08, #0
+	ADDEQ %r09, %r09, #1
+	TEQ %r09, #100
+	MOVEQ %r09, #0
+	LDR %r11, %r04
+	ORR %r12, %r12, %r11, LSL #16
+	LDR %r11, %r05
+	ORR %r12, %r12, %r11, LSL #32
+	LDR %r13, %r06
+	LDR %r11, %r07
+	ORR %r13, %r13, %r11, LSL #16
+	LDR %r11, %r08
+	ORR %r13, %r13, %r11, LSL #32
+	LDR %r11, %r09
+	ORR %r13, %r13, %r11, LSL #48
+	
+	MOV %r11, #1
+	ADD %r11, %r11, %r15, LSL #1
+	ADD %r00, %r00, %r11 // Saut indexé
+
+	ADD %r00, %r00, %r01 // Wait
+	EOR %r02, %r02, #0x39 // {0} ^ {1}
+	ADD %r00, %r00, %r01 // Wait
+	EOR %r02, %r02, #0x5d // {1} ^ {2}
+	ADD %r00, %r00, %r01 // Wait
+	EOR %r02, %r02, #0x14 // {2} ^ {3}
+	ADD %r00, %r00, %r01 // Wait
+	EOR %r02, %r02, #0x29 // {3} ^ {4}
+	ADD %r00, %r00, %r01 // Wait
+	EOR %r02, %r02, #0x0b // {4} ^ {5}
+	ADD %r00, %r00, %r01 // Wait
+	EOR %r02, %r02, #0x10 // {5} ^ {6}
+	ADD %r00, %r00, %r01 // Wait
+	EOR %r02, %r02, #0x7a // {6} ^ {7}
+	ADD %r00, %r00, %r01 // Wait
+	EOR %r02, %r02, #0x78 // {7} ^ {8}
+	ADD %r00, %r00, %r01 // Wait
+	EOR %r02, %r02, #0x10 // {8} ^ {9}
+	ADD %r00, %r00, %r01 // Wait
+	EOR %r02, %r02, #0x3950 // {09} ^ {10}
+	ADD %r00, %r00, %r01 // Wait
+	EOR %r02, %r02, #0x39 // {0} ^ {1}
+	ADD %r00, %r00, %r01 // Wait
+	EOR %r02, %r02, #0x5d // {1} ^ {2}
+	ADD %r00, %r00, %r01 // Wait
+	EOR %r02, %r02, #0x14 // {2} ^ {3}
+	ADD %r00, %r00, %r01 // Wait
+	EOR %r02, %r02, #0x29 // {3} ^ {4}
+	ADD %r00, %r00, %r01 // Wait
+	EOR %r02, %r02, #0x0b // {4} ^ {5}
+	ADD %r00, %r00, %r01 // Wait
+	EOR %r02, %r02, #0x10 // {5} ^ {6}
+	ADD %r00, %r00, %r01 // Wait
+	EOR %r02, %r02, #0x7a // {6} ^ {7}
+	ADD %r00, %r00, %r01 // Wait
+	EOR %r02, %r02, #0x78 // {7} ^ {8}
+	ADD %r00, %r00, %r01 // Wait
+	EOR %r02, %r02, #0x10 // {8} ^ {9}
+	ADD %r00, %r00, %r01 // Wait
+	EOR %r02, %r02, #0x5d50 // {19} ^ {20}
+	ADD %r00, %r00, %r01 // Wait
+	EOR %r02, %r02, #0x39 // {0} ^ {1}
+	ADD %r00, %r00, %r01 // Wait
+	EOR %r02, %r02, #0x5d // {1} ^ {2}
+	ADD %r00, %r00, %r01 // Wait
+	EOR %r02, %r02, #0x14 // {2} ^ {3}
+	ADD %r00, %r00, %r01 // Wait
+	EOR %r02, %r02, #0x29 // {3} ^ {4}
+	ADD %r00, %r00, %r01 // Wait
+	EOR %r02, %r02, #0x0b // {4} ^ {5}
+	ADD %r00, %r00, %r01 // Wait
+	EOR %r02, %r02, #0x10 // {5} ^ {6}
+	ADD %r00, %r00, %r01 // Wait
+	EOR %r02, %r02, #0x7a // {6} ^ {7}
+	ADD %r00, %r00, %r01 // Wait
+	EOR %r02, %r02, #0x78 // {7} ^ {8}
+	ADD %r00, %r00, %r01 // Wait
+	EOR %r02, %r02, #0x10 // {8} ^ {9}
+	ADD %r00, %r00, %r01 // Wait
+	EOR %r02, %r02, #0x1450 // {29} ^ {30}
+	ADD %r00, %r00, %r01 // Wait
+	EOR %r02, %r02, #0x39 // {0} ^ {1}
+	ADD %r00, %r00, %r01 // Wait
+	EOR %r02, %r02, #0x5d // {1} ^ {2}
+	ADD %r00, %r00, %r01 // Wait
+	EOR %r02, %r02, #0x14 // {2} ^ {3}
+	ADD %r00, %r00, %r01 // Wait
+	EOR %r02, %r02, #0x29 // {3} ^ {4}
+	ADD %r00, %r00, %r01 // Wait
+	EOR %r02, %r02, #0x0b // {4} ^ {5}
+	ADD %r00, %r00, %r01 // Wait
+	EOR %r02, %r02, #0x10 // {5} ^ {6}
+	ADD %r00, %r00, %r01 // Wait
+	EOR %r02, %r02, #0x7a // {6} ^ {7}
+	ADD %r00, %r00, %r01 // Wait
+	EOR %r02, %r02, #0x78 // {7} ^ {8}
+	ADD %r00, %r00, %r01 // Wait
+	EOR %r02, %r02, #0x10 // {8} ^ {9}
+	ADD %r00, %r00, %r01 // Wait
+	EOR %r02, %r02, #0x2950 // {39} ^ {40}
+	ADD %r00, %r00, %r01 // Wait
+	EOR %r02, %r02, #0x39 // {0} ^ {1}
+	ADD %r00, %r00, %r01 // Wait
+	EOR %r02, %r02, #0x5d // {1} ^ {2}
+	ADD %r00, %r00, %r01 // Wait
+	EOR %r02, %r02, #0x14 // {2} ^ {3}
+	ADD %r00, %r00, %r01 // Wait
+	EOR %r02, %r02, #0x29 // {3} ^ {4}
+	ADD %r00, %r00, %r01 // Wait
+	EOR %r02, %r02, #0x0b // {4} ^ {5}
+	ADD %r00, %r00, %r01 // Wait
+	EOR %r02, %r02, #0x10 // {5} ^ {6}
+	ADD %r00, %r00, %r01 // Wait
+	EOR %r02, %r02, #0x7a // {6} ^ {7}
+	ADD %r00, %r00, %r01 // Wait
+	EOR %r02, %r02, #0x78 // {7} ^ {8}
+	ADD %r00, %r00, %r01 // Wait
+	EOR %r02, %r02, #0x10 // {8} ^ {9}
+	ADD %r00, %r00, %r01 // Wait
+	EOR %r02, %r02, #0x0b50 // {49} ^ {50}
+	ADD %r00, %r00, %r01 // Wait
+	EOR %r02, %r02, #0x39 // {0} ^ {1}
+	ADD %r00, %r00, %r01 // Wait
+	EOR %r02, %r02, #0x5d // {1} ^ {2}
+	ADD %r00, %r00, %r01 // Wait
+	EOR %r02, %r02, #0x14 // {2} ^ {3}
+	ADD %r00, %r00, %r01 // Wait
+	EOR %r02, %r02, #0x29 // {3} ^ {4}
+	ADD %r00, %r00, %r01 // Wait
+	EOR %r02, %r02, #0x0b // {4} ^ {5}
+	ADD %r00, %r00, %r01 // Wait
+	EOR %r02, %r02, #0x10 // {5} ^ {6}
+	ADD %r00, %r00, %r01 // Wait
+	EOR %r02, %r02, #0x7a // {6} ^ {7}
+	ADD %r00, %r00, %r01 // Wait
+	EOR %r02, %r02, #0x78 // {7} ^ {8}
+	ADD %r00, %r00, %r01 // Wait
+	EOR %r02, %r02, #0x10 // {8} ^ {9}
+	ADD %r00, %r00, %r01 // Wait
+	// On met à jour date
+	MOV %r03, %r13
+	// On met à jour minutes/heure
+	MOV %r02, %r12
+	// Et c'est parti !
+	JMP loop
+
+
 init:
-	MOV %r04, #0
-	MOV %r05, #0
-	MOV %r06, #1
-	MOV %r07, #1
-	MOV %r08, #0
-	MOV %r09, #0
-	// Initialisation de la sortie
-	MOV %r11, #0x3f3f // 00
-	ORR %r11, %r11, #0x3f3f, LSL #16
-	ORR %r02, %r11, #0x3f3f, LSL #32
-	MOV %r11, #0x3f06 // 01
-	ORR %r11, %r11, #0x3f06, LSL #16
-	ORR %r03, %r11, %r02, LSL #32 // On a maintenant 00000101 dans r03
 	// Initialisation de la table
 	MOV %r11, #0x3f3f // 00
 	STR %r11, #00
@@ -451,6 +615,7 @@ init:
 	STR %r11, #99
 	MOV %r11, #32
 	STR %r11, #101
+	MOV %r11, #32
 	STR %r11, #103
 	STR %r11, #105
 	STR %r11, #107
@@ -464,7 +629,19 @@ init:
 	STR %r11, #106
 	STR %r11, #109
 	STR %r11, #111
-	JMP loop
+	LDR %r02, %r15
+	LDR %r11, %r04
+	ORR %r02, %r02, %r11, LSL #16
+	LDR %r11, %r05
+	ORR %r02, %r02, %r11, LSL #32
+	LDR %r03, %r06
+	LDR %r11, %r07
+	ORR %r03, %r03, %r11, LSL #16
+	LDR %r11, %r08
+	ORR %r03, %r03, %r11, LSL #32
+	LDR %r11, %r09
+	ORR %r03, %r03, %r11, LSL #48
+	JMP loopinit
 
 // mn = minutes
 // h = heures
