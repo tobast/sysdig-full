@@ -29,8 +29,8 @@ void StdinReader::getResult()
 
 void StdinReader::update()
 {
-    for(int i=0; i < 16; i++)
-        buffer[i] = getchar();
+    for(int i=0; i < 16 * 5; i++)
+        buffer[i & 0xf] = getchar();
     if(resultRequested) {
         //unsigned char out[16]; // Copying to avoid problems of shared memory
         // (Remember, this is running in a separated thread)
