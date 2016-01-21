@@ -3,8 +3,10 @@
 
 #include <QVBoxLayout>
 #include <QWidget>
+#include <QThread>
 
 #include "FullLcd.h"
+#include "StdinReader.h"
 
 class Displayer : public QWidget
 {
@@ -16,9 +18,19 @@ public:
 
 private: //meth
     void buildWidget();
+
+private slots:
+    void updateLCD(StdinResult res);
 private:
     QVBoxLayout* l_main;
     FullLcd* lcd;
+
+    StdinReader* stdinReader;
+    QThread* readerThread;
+
+
+signals:
+    void requestValues();
 };
 
 #endif // DISPLAYER_H
