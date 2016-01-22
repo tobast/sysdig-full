@@ -5,7 +5,7 @@
 ###################################################################
 
 DIR_LIST=display_gui assembler clock simulator processor
-QMAKE=qmake-qt5
+QMAKE=qmake
 MAKE=make
 
 all: display_gui_mkf

@@ -5,6 +5,7 @@
 
 #include <QList>
 #include <QTimer>
+#include <QMetaType>
 #include <cstdio>
 
 typedef unsigned char* StdinResult;
