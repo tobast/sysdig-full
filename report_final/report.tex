@@ -166,7 +166,7 @@ L'assembleur est très probablement la partie la plus simple de notre projet~: l
 \section{Interface de sortie} \label{sec:gui}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\relire
+\relire \relu{Théo}
 
 L'interface, programmée en C++ avec Qt, est composée de 14 afficheurs 7 segments, pilotés par l'entrée standard (détaillé ci-dessous §\ref{ssec:gui_use}). Elle supporte sans ralentissement les quelques $\sim 12\text{Mo}$ d'entrée par seconde en mode \emph{fast}.
 
@@ -181,11 +181,12 @@ La compilation s'effectue par un simple \lstbash{make} dans le dossier de l'inte
 \end{center}
 \vspace{-2em}
 \caption{Ordre des segments. Crédit~: H2g2bob @ Wikipedia}
+\label{fig:segorder}
 \end{wrapfigure}
 
 Le programme ne prend aucun argument. Il attend sur son entrée standard des caractères formatés comme la sortie du processeur (§\ref{ssec:compilo_io}), c'est-à-dire 16 caractères à la suite. Les caractères contrôlent chacun un afficheur, dans l'ordre \verb!--HHMMSSYYYYMMDD! respectivement heure à deux chiffres, minutes, secondes, année à 4 chiffres, mois, jour.
 
-Les bits du caractère contrôlent les segments d'un afficheur, à savoir en commençant par les poids forts \verb!-gfedcba!
+Les bits du caractère contrôlent les segments d'un afficheur, à savoir en commençant par les poids forts \verb!-gfedcba! (figure \ref{fig:segorder} ci-contre).
 
 \subsection{Fonctionnement et optimisations}
 
