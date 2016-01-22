@@ -122,7 +122,7 @@ Nous avons fait le choix d'écrire notre processeur en Python~: le code, une foi
 \todo{Théo}
 
 \subsubsection{Memory unit}
-\todo{(qui, déjà ?)}
+\todo{Nathanaël}
 
 \subsubsection{$op_1$ unit}
 \todo{Théo}
@@ -157,9 +157,90 @@ L'assembleur est très probablement la partie la plus simple de notre projet~: l
 \section{Programme de l'horloge} \label{sec:clock}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\htodo{Nathanaël, qui va devoir être \emph{très} pédagogue}
+\relire
 
+Le programme de l'horloge doit gérer l'heure et la date, mais
+également le décodage de celles-ci vers un affichage 7 segments, et
+pour la version temps réel, la synchronisation sur l'entrée qui lui
+donne un \textit{tick} à chaque seconde. Les programmes sont dans les
+fichiers \verb!clock/clock.s! pour la version rapide, et
+\verb!clock/clock_fast.s! pour la version temps réel.
 
+\subsection{Lecture de l'entrée}
+
+Pendant les 7 premiers cycles, le processeur reçoit l'heure actuelle
+dans son registre d'entrée, sous forme secondes, minutes, heures,
+jours, mois, années, siècles (dans l'ordre). On stocke ces valeurs,
+puis si l'entrée du processeur était \verb!/dev/null!, on initialise au
+1er janvier 0000, \verb!00:00:00! à la place. Pour cela, il suffit de
+vérifier si les valeurs qui ont été stockées étaient négatives.
+
+La deuxième partie de la lecture de l'entrée se déroule dans le mode
+temps réel~: l'entrée vaut alors \verb!0!, sauf une fois par seconde
+réelle, où elle vaut \verb!1!. Pour attendre ce moment, on utilise
+l'instruction suivante~: \verb!ADD %r00, %r00, %r01!. En effet,
+\verb!%r01! étant le registre d'entrée, et \verb!%r00! le compteur
+d'instructions, le résultat de cette instruction sera de ne passer à
+l'instruction suivante que si l'entrée était \verb!1!. Le seul
+problème de cette instruction est qu'elle n'est pas très robuste~: si
+l'entrée n'est ni \verb!0! ni \verb!1!, on effectue un saut à un
+endroit incontrôlé du code... On pourrait la remplacer par
+\verb!ADD %r00, %r00, %r01, LSR #63!, qui est robuste et ne passe à
+l'instruction suivante que si l'entrée est strictement négative.
+
+\subsection{La boucle principale}
+
+La fréquence de l'horloge est de deux cycles processeur par seconde
+simulée, ce qui est optimal si on veut que ce nombre soit constant~:
+en effet, il y a deux registres de sortie qu'il faut mettre à jour, et
+le processeur ne peut écrire que dans un seul registre à chaque cycle...
+
+Pour atteindre cette fréquence optimale, il a fallu dérouler
+complètement la boucle incrémentant les secondes. Ainsi, dans le code
+final, chaque itération de la boucle principale correspond à une
+minute, avec une mise à jour tous les deux cycles de l'affichage
+contenant les secondes. Cette dernière est faite en effectuant un
+\verb!EOR! avec une constante bien choisie, qui est le \verb!XOR! de
+l'affichage 7-segments du nombre de secondes actuel à cet instant de
+la boucle, et ce nombre plus 1.
+
+L'autre instruction qui est éxécutée une fois sur deux calcule l'état
+de l'affichage à la minute suivante et le stocke dans deux registres
+temporaires, \verb!r%12! et \verb!r%13!. Pour cela, on commence par
+calculer le nombre de jours du mois actuel, en vérifiant si l'année
+est bissextile, puis on incrémente les minutes, on vérifie si
+celles-ci valent à présent 60. Si c'est le cas, on remet à jour les
+minutes, on incrémente les heures, et on fait de même avec
+successivement les heures, les jours, les mois, les années et les
+siècles. Une fois que le nouvel état est calculé, on utilise une table
+en mémoire pour décoder ces nombres vers l'affichage 7-segments, et on
+stocke cet affichage dans \verb!%r12! et \verb!%r13!. On remplit
+ensuite les espaces restants pour des instructions jusqu'à la fin de
+la boucle par des \verb!NOP! (\verb!ADD %r15, %r15, #0!), pour garder
+deux cycles d'horloge par seconde simulée et que la fréquence de
+l'horloge reste stable. Enfin, à la toute fin de la boucle, on met à
+jour la nouvelle sortie avec les résultats qu'on avait stockés, et on
+recommence une nouvelle itération (le saut à la fin de la boucle
+comptant pour une instruction).
+
+Dans la version temps réel, on insère de plus une instruction
+d'attente (\verb!ADD %r00, %r00, %r01!) avant chaque mise à jour des
+secondes, pour attendre le signal de passage à la seconde suivante.
+
+\subsection{Initialisation}
+
+L'initialisation de l'horloge consiste à initialiser la mémoire RAM
+avec les informations de décodage 7-segments, et le nombre de jours
+dans chaque mois. On effectue ensuite un saut dans une version
+spécialisée de la boucle pour la première itération, qui initialise la
+sortie, qui calcule l'état de l'itération suivante, puis qui effectue
+un saut indexé afin de se retrouver au bon nombre de secondes à
+initialiser. La partie dans laquelle on effectue le saut est comme la
+boucle principale, excepté qu'il n'y a pas d'autre calcul à effectuer
+et que les instructions intermédiaires sont donc uniquement des
+\verb!NOP! cette fois-ci. On effectue enfin un saut dans la boucle
+principale une fois que le nombre de secondes est revenu à 0, ce qui
+permet à celle-ci de fonctionner correctement.
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
