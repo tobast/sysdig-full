@@ -44,6 +44,7 @@ En définitive, les programmes obtenus, une fois combinés correctement, répond
 
 \todo{abstract ?}
 \relire
+\relu{Nathanaël}
 
 \subsection{Utilisation}
 
@@ -77,7 +78,7 @@ Les éléments du projet sont répartis dans des dossiers comme il suit~:
 \end{itemize}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Compilateur de circuits} \label{sec:compilo}
+\section{Compilateur de netlists} \label{sec:compilo}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \htodo{Nathanaël}
@@ -85,7 +86,41 @@ Les éléments du projet sont répartis dans des dossiers comme il suit~:
 \todo{Abstract}
 
 \subsection{Utilisation}
-\todo{Commandes, \ldots}
+
+Pour compiler le compilateur, il suffit de faire
+\lstbash{ocamlbuild compiler.native} dans le dossier du simulateur
+(\verb!simulator!), ou un simple \lstbash{make} dans le dossier du
+projet.
+
+L'utilisation du compilateur est la suivante~:
+
+\lstbash{./compiler.native [options] fichier.net}
+
+Le compilateur produira un fichier C \verb!fichier.c!, et un fichier
+éxécutable \verb!fichier!. Les options acceptées sont les suivantes~:
+\begin{itemize}
+\item{\verb!-print!~: N'écrit que le code C, en particulier, ne
+    produit pas l'éxécutable \verb!fichier!.}
+\item{\verb!-iomode!~$n$~: Choisit le mode d'entrée-sortie de la
+    netlist compilée. Les modes d'entrée-sortie sont les suivants~:
+    \begin{itemize}
+    \item{0~: Entrées sorties interactives, les nappes de fils étant
+        considérées comme des entiers 64 bits non signés, qui sont
+        affichés et demandés à l'utilisateur en décimal.}
+    \item{1~: Chaque bit d'entrée-sortie est représenté par un
+        caractère \verb!'0'! ou \verb!'1'!.}
+    \item{2~: Chaque nappe d'entrée-sortie est représentée de la
+        manière la plus compacte possible sur un nombre entier de
+        caractères~; dans l'ordre \textit{big-endian}.}
+    \end{itemize}
+}
+\item{\verb!-n!~$n$~: Nombre de cycles à simuler. Si $n$ est omis, il
+    est pris comme égal à $+\infty$.}
+\end{itemize}
+
+Le fichier éxécutable produit prend autant d'arguments que le nombre
+de \textsc{rom}s du circuit~; chacun étant un fichier binaire
+contenant l'état initial de la \textsc{rom}.
 
 \subsection{Fonctionnement}
 
@@ -158,6 +193,7 @@ L'assembleur est très probablement la partie la plus simple de notre projet~: l
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \relire
+\relu{Nathanaël}
 
 Le programme de l'horloge doit gérer l'heure et la date, mais
 également le décodage de celles-ci vers un affichage 7 segments, et
@@ -229,18 +265,18 @@ secondes, pour attendre le signal de passage à la seconde suivante.
 
 \subsection{Initialisation}
 
-L'initialisation de l'horloge consiste à initialiser la mémoire RAM
-avec les informations de décodage 7-segments, et le nombre de jours
-dans chaque mois. On effectue ensuite un saut dans une version
-spécialisée de la boucle pour la première itération, qui initialise la
-sortie, qui calcule l'état de l'itération suivante, puis qui effectue
-un saut indexé afin de se retrouver au bon nombre de secondes à
-initialiser. La partie dans laquelle on effectue le saut est comme la
-boucle principale, excepté qu'il n'y a pas d'autre calcul à effectuer
-et que les instructions intermédiaires sont donc uniquement des
-\verb!NOP! cette fois-ci. On effectue enfin un saut dans la boucle
-principale une fois que le nombre de secondes est revenu à 0, ce qui
-permet à celle-ci de fonctionner correctement.
+L'initialisation de l'horloge consiste à initialiser la mémoire
+\textsc{ram} avec les informations de décodage 7-segments, et le
+nombre de jours dans chaque mois. On effectue ensuite un saut dans une
+version spécialisée de la boucle pour la première itération, qui
+initialise la sortie, qui calcule l'état de l'itération suivante, puis
+qui effectue un saut indexé afin de se retrouver au bon nombre de
+secondes à initialiser. La partie dans laquelle on effectue le saut
+est comme la boucle principale, excepté qu'il n'y a pas d'autre calcul
+à effectuer et que les instructions intermédiaires sont donc
+uniquement des \verb!NOP! cette fois-ci. On effectue enfin un saut
+dans la boucle principale une fois que le nombre de secondes est
+revenu à 0, ce qui permet à celle-ci de fonctionner correctement.
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -248,12 +284,15 @@ permet à celle-ci de fonctionner correctement.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \relire \relu{Théo}
+\relu{Nathanaël}
 
 L'interface, programmée en C++ avec Qt, est composée de 14 afficheurs 7 segments, pilotés par l'entrée standard (détaillé ci-dessous §\ref{ssec:gui_use}). Elle supporte sans ralentissement les quelques $\sim 12\text{Mo}$ d'entrée par seconde en mode \emph{fast}.
 
 \subsection{Utilisation} \label{ssec:gui_use}
 
 La compilation s'effectue par un simple \lstbash{make} dans le dossier de l'interface (\texttt{display\_gui}), ou un \lstbash{make} dans le dossier du projet~; le binaire produit est \texttt{display\_gui/display\_gui}.
+
+\todo{Selon moi, ça devrait être \lstbash{qmake && make} dans le premier cas, mais enlève cette note si c'est pas le cas... (Nathanaël)}
 
 \begin{wrapfigure}{r}{0.35\textwidth}
 \begin{center}
