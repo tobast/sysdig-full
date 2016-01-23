@@ -26,6 +26,10 @@
 \begin{document}
 \maketitle
 
+\htodo{Se décider sur la typographie~: ALU ou \textsc{alu}~?}
+
+\todo{Idem pour RAM/\textsc{ram}, ROM/\textsc{rom}, ...}
+
 \relire
 \begin{abstract}
 Notre objectif dans ce projet a été principalement d'avoir un code \emph{correct} et \emph{rapide à l'exécution}~; nous pensons avoir atteint ces deux objectifs. Dans ce but, nous avons commencé par implémenter non pas un simulateur, mais un \emph{compilateur} de netlists~; puis avons produit un code assembleur pour l'horloge extrêmement optimisé, tout en conservant un nombre constant de cycles processeur par incrément de seconde. Notre processeur en lui-même s'inspire fortement d'une architecture ARM, sans toutefois rechercher l'exhaustivité des opérations, ce qui nous a permis d'obtenir un processeur fonctionnel et composé de peu de portes, donc efficace. Pour finir, nous avons implémenté une GUI affichant un écran composé de blocs 7 segments, contrôlés directement par la sortie du processeur, optimisée jusqu'à ce que le programme limitant la vitesse d'exécution soit le processeur lui-même.
@@ -62,7 +66,8 @@ La compilation de toutes les composantes du projet s'effectue simplement par un 
 Le lancement de l'horloge peut se faire dans trois modes~:
 \begin{itemize}
 \item temps réel~: \lstbash{make run} ou \lstbash{./run_realtime.sh}, horloge en temps réel synchronisée sur le temps système à l'initialisation~;
-\item rapide~: \lstbash{make run-fast} ou \lstbash{./run_fast.sh}, horloge en accéléré initialisée sur le temps système.
+\item rapide~: \lstbash{make run-fast} ou \lstbash{./run_fast.sh}, horloge en accéléré initialisée sur le temps système~;
+\item rapide, initialisé à 0~: \lstbash{./run_fast_0.sh}, horloge en accéléré initialisée au 1er janvier 0000, \verb!00:00:00!, utile pour évaluer la performance.
 \end{itemize}
 
 \subsection{Organisation du projet}
@@ -80,9 +85,12 @@ Les éléments du projet sont répartis dans des dossiers comme il suit~:
 \section{Compilateur de netlists} \label{sec:compilo}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\htodo{Nathanaël}
-
 \todo{Abstract}
+
+\todo{Euh, je mets quoi dans l'abstract~?}
+
+\relire
+\relu{Nathanaël}
 
 \subsection{Utilisation}
 
@@ -103,9 +111,10 @@ Le compilateur produira un fichier C \verb!fichier.c!, et un fichier
 \item{\verb!-iomode!~$n$~: Choisit le mode d'entrée-sortie de la
     netlist compilée. Les modes d'entrée-sortie sont les suivants~:
     \begin{itemize}
-    \item{0~: Entrées sorties interactives, les nappes de fils étant
+    \item{0~: Entrées-sorties interactives, les nappes de fils étant
         considérées comme des entiers 64 bits non signés, qui sont
-        affichés et demandés à l'utilisateur en décimal.}
+        affichés et demandés à l'utilisateur en décimal. C'est la
+        valeur par défaut.}
     \item{1~: Chaque bit d'entrée-sortie est représenté par un
         caractère \verb!'0'! ou \verb!'1'!.}
     \item{2~: Chaque nappe d'entrée-sortie est représentée de la
@@ -122,12 +131,48 @@ de \textsc{rom}s du circuit~; chacun étant un fichier binaire
 contenant l'état initial de la \textsc{rom}.
 
 \subsection{Fonctionnement}
+Le compilateur commence par ordonner les équations afin que celles-ci
+s'exécutent dans le bon ordre (on n'utilise pas une variable avant de
+la mettre à jour, avec un traitement spécial des registres~: ceux-ci
+sont en effet modifiés à la fin). Ensuite, la traduction de chaque
+équation est ajoutée dans le corps de la boucle principale du
+programme.
+
+Les nappes de fils sont stockées dans des entiers 64 bits~; en
+particulier, cela implique que les nappes de fils de plus de 64 bits
+ne sont pas supportées facilement. Par souci de simplicité, ces nappes
+ne sont pas supportées du tout. Cela n'affecte pas notre processeur,
+étant donnée que celui-ci n'utilise que des nappes d'au plus 64 bits.
 
 \subsection{Entrées/sorties} \label{ssec:compilo_io}
 \todo{À supprimer, faudra faire la référence autre part}
 
 \subsection{Optimisations}
 \todo{Parce que ça a beau être dégueu, ça a la classe d'en parler :D}
+
+On utilise bien sûr des opérations bit-à-bit lors d'opérations comme
+\verb!AND!, \verb!OR! ou \verb!MUX! sur des nappes de fils.
+
+De plus, on garde une table de permettant de savoir où trouver chaque
+nappe de fils ou fil (i.e. dans quelle variable, et sa position
+interne à cette variable), ce qui permet de drastiquement diminuer le
+nombre d'opérations \verb!SLICE!, \verb!SELECT! et \verb!CONCAT!. Le
+compilateur optimise finalement l'appel d'opérateurs sur chaque fil
+d'une nappe (ou de deux nappes) en un seul opérateur bit-à-bit, afin
+de simplifier encore plus le code produit. Ainsi, dans un additionneur
+complet, les portes \verb!XOR! et \verb!AND! se retrouvant entre les
+deux entrées sur chaque fil se retrouvent transformées en une unique
+opération bit-à-bit sur les nappes.
+
+Finalement, lorsqu'un unique fil est étendu en une nappe complète (par
+le biais d'opérations \verb!CONCAT!), on optimise cela en utilisant un
+\verb!-! unaire~: \verb!sortie = (-(entrée&1))&!$masque$. Ceci permet
+d'éliminer un grand nombre d'opérations \verb!CONCAT! dues à
+l'extension d'un fil en une nappe, par exemple pour des \verb!MUX! ou
+pour l'\textsc{alu}.
+
+On effectue donc une simplification assez importante de la netlist de cette manière.
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Processeur} \label{sec:proc}
