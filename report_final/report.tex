@@ -27,6 +27,7 @@
 \maketitle
 
 \relire
+\relu{No}
 \begin{abstract}
 Notre objectif dans ce projet a été principalement d'avoir un code \emph{correct} et \emph{rapide à l'exécution}~; nous pensons avoir atteint ces deux objectifs. Dans ce but, nous avons commencé par implémenter non pas un simulateur, mais un \emph{compilateur} de netlists~; puis avons produit un code assembleur pour l'horloge extrêmement optimisé, tout en conservant un nombre constant de cycles processeur par incrément de seconde. Notre processeur en lui-même s'inspire fortement d'une architecture ARM, sans toutefois rechercher l'exhaustivité des opérations, ce qui nous a permis d'obtenir un processeur fonctionnel et composé de peu de portes, donc efficace. Pour finir, nous avons implémenté une GUI affichant un écran composé de blocs 7 segments, contrôlés directement par la sortie du processeur, optimisée jusqu'à ce que le programme limitant la vitesse d'exécution soit le processeur lui-même.
 
@@ -118,6 +119,21 @@ Nous avons fait le choix d'écrire notre processeur en Python~: le code, une foi
 \subsubsection{ALU}
 \todo{No}
 
+Grâce à un choix adapté des opcodes pour les bonnes opérations, on limite ici le nombre de multiplexeurs utilisés.
+
+L'ALU commence par déterminer les $op_1$ et $op_2$ adaptés à l'opération considérée~:
+\begin{itemize}
+
+\item si le dernier bit de l'instruction est un $1$ (vrai dans le cas de \lstc{SUB} et \lstc{BIC}), l'$op_2$ utilisé sera la négation de celui fournit par l'op2selector (en prenant en compte la retenue dans le cas de la soustraction, on retrouve bien l'opposé de l'$op_2$ donné à la base)~;
+
+\item si le deuxième bit de l'instruction est un $1$, et uniquement dans le cas des opérations arithmétiques (donc seulement das le cas de l'opération \lstc{RSB}), l'$op_1$ utilisé sera la négation de celui fourni par l'op1selector.
+
+\end{itemize}
+
+L'ALU calcule ensuite séparément les résultats de toutes les opérations booléennes ainsi qu'un unique résultat arithmétique, qui sera une addition ou une soustraction (dans un sens ou dans l'autre) en fonction des $op_1$ et $op_2$ sélectionnés plus tôt. Nous justifions cette séparation par le fait qu'une structure d'additionneur est suffisamment importante pour la limiter à une unique occurrence, alors que les différente opérations booléennes, en plus d'être difficile à combiner (à l'exception de \lstc{AND} et \lstc{BIC}, qui l'ont été), sont nettement moins coûteuses en terme de nombre de portes logiques.
+
+Enfin, l'ALU sélectionne la bonne sortie parmi toutes celles calculées. En particulier, un troisième bit à $0$ indique une opération arithmétique, tandis qu'un $1$ indique une opération booléenne.
+
 \subsubsection{Flags unit}
 \todo{Théo}
 
@@ -138,6 +154,8 @@ Nous avons fait le choix d'écrire notre processeur en Python~: le code, une foi
 
 \subsubsection{Result selector}
 \todo{No (?)}
+
+Il ne s'agit ici que d'un multiplexeur~: si l'instruction a son premier et son quatrième bit égaux à $1$, on sélectionne le résultat d'un accès mémoire~; sinon, on sélectionne le résultat donné par l'ALU.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Assembleur} \label{sec:cas}
