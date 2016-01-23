@@ -1,11 +1,15 @@
 CAS=../assembler/cas
 CLOCKS=clock.bin clock_wait.bin
+QUARTZ=quartz
 
-all: $(CLOCKS)
+all: $(CLOCKS) $(QUARTZ)
+
+$(QUARTZ): $(QUARTZ).c
+	gcc -O2 $< -o $@ 
 
 %.bin: %.s
 	$(CAS) $<
 
 clean:
-	rm -f $(CLOCKS)
+	rm -f $(CLOCKS) $(QUARTZ)
 	
