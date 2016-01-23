@@ -287,16 +287,11 @@ revenu à 0, ce qui permet à celle-ci de fonctionner correctement.
 \relire \relu{Théo}
 \relu{Nathanaël}
 
-L'interface, programmée en C++ avec Qt, est composée de 14 afficheurs 7 segments, pilotés par l'entrée standard (détaillé ci-dessous §\ref{ssec:gui_use}). Elle supporte sans ralentissement les quelques $\sim 12\text{Mo}$ d'entrée par seconde en mode \emph{fast}.
-
-\todo{Selon moi, soit tu dis ``quelques 12 Mo'', soit ``$\sim$ 12
-  Mo'', mais pas les deux... (Nathanaël)}
+L'interface, programmée en C++ avec Qt, est composée de 14 afficheurs 7 segments, pilotés par l'entrée standard (détaillé ci-dessous §\ref{ssec:gui_use}). Elle supporte sans ralentissement les quelques $12\text{Mo}$ d'entrée par seconde en mode \emph{fast}.
 
 \subsection{Utilisation} \label{ssec:gui_use}
 
-La compilation s'effectue par un simple \lstbash{make} dans le dossier de l'interface (\texttt{display\_gui}), ou un \lstbash{make} dans le dossier du projet~; le binaire produit est \texttt{display\_gui/display\_gui}.
-
-\todo{Selon moi, ça devrait être \lstbash{qmake && make} dans le premier cas, mais enlève cette note si c'est pas le cas... (Nathanaël)}
+La compilation s'effectue par un simple \lstbash{qmake && make} dans le dossier de l'interface (\texttt{display\_gui}), ou un \lstbash{make} dans le dossier du projet~; le binaire produit est \texttt{display\_gui/display\_gui}.
 
 \begin{wrapfigure}{r}{0.35\textwidth}
 \begin{center}
