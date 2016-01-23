@@ -8,6 +8,8 @@
 *.cmxs
 *.cmxa
 
+display_gui/Makefile
+
 # ocamlbuild working directory
 _build/
 
@@ -23,7 +25,9 @@ setup.log
 *.aux
 *.log
 *.synctex.gz
+*.toc
 *.bak
+*report.out
 
 # vim
 *.swp
