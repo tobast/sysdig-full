@@ -30,7 +30,7 @@
 \begin{abstract}
 Notre objectif dans ce projet a été principalement d'avoir un code \emph{correct} et \emph{rapide à l'exécution}~; nous pensons avoir atteint ces deux objectifs. Dans ce but, nous avons commencé par implémenter non pas un simulateur, mais un \emph{compilateur} de netlists~; puis avons produit un code assembleur pour l'horloge extrêmement optimisé, tout en conservant un nombre constant de cycles processeur par incrément de seconde. Notre processeur en lui-même s'inspire fortement d'une architecture ARM, sans toutefois rechercher l'exhaustivité des opérations, ce qui nous a permis d'obtenir un processeur fonctionnel et composé de peu de portes, donc efficace. Pour finir, nous avons implémenté une GUI affichant un écran composé de blocs 7 segments, contrôlés directement par la sortie du processeur, optimisée jusqu'à ce que le programme limitant la vitesse d'exécution soit le processeur lui-même.
 
-En définitive, les programmes obtenus, une fois combinés correctement, répondent bien au cahier des charges imposé et permettent d'atteindre une vitesse d'exécution en mode \textit{fast} de l'ordre de \textbf{3.5 jours simulées par seconde réelle}.
+En définitive, les programmes obtenus, une fois combinés correctement, répondent bien au cahier des charges imposé et permettent d'atteindre une vitesse d'exécution en mode \textit{fast} de l'ordre de \textbf{9.25 jours simulées par seconde réelle}.
 \end{abstract}
 
 \setcounter{tocdepth}{2} % Limite la TOC à sections/subsections
@@ -70,7 +70,7 @@ Le lancement de l'horloge peut se faire dans trois modes~:
 Les éléments du projet sont répartis dans des dossiers comme il suit~:
 \begin{itemize}
 \item \texttt{assember}~: l'assembleur pour notre processeur (§\ref{sec:cas})
-\item \texttt{clock}~: les codes assembleur de nos programmes d'horloge (§\ref{sec:clock})
+\item \texttt{clock}~: les codes assembleur de nos programmes d'horloge et nos quartz (§\ref{sec:clock})
 \item \texttt{display\_gui}~: l'interface d'affichage (§\ref{sec:gui})
 \item \texttt{processor}~: le code produisant la netlist de notre processeur (§\ref{sec:proc})
 \item \texttt{simulator}~: le compilateur de netlists (§\ref{sec:compilo})
@@ -204,6 +204,8 @@ fichiers \verb!clock/clock.s! pour la version rapide, et
 
 \subsection{Lecture de l'entrée}
 
+\todo{Parler des quartz}
+
 Pendant les 7 premiers cycles, le processeur reçoit l'heure actuelle
 dans son registre d'entrée, sous forme secondes, minutes, heures,
 jours, mois, années, siècles (dans l'ordre). On stocke ces valeurs,
@@ -286,9 +288,7 @@ revenu à 0, ce qui permet à celle-ci de fonctionner correctement.
 \relire \relu{Théo}
 \relu{Nathanaël}
 
-L'interface, programmée en C++ avec Qt, est composée de 14 afficheurs 7 segments, pilotés par l'entrée standard (détaillé ci-dessous §\ref{ssec:gui_use}). Elle supporte sans ralentissement les quelques $12\text{Mo}$ d'entrée par seconde en mode \emph{fast}.
-
-\todo{Aussi, ça serait pas 20 voire un peu plus maintenant ? :D}
+L'interface, programmée en C++ avec Qt, est composée de 14 afficheurs 7 segments, pilotés par l'entrée standard (détaillé ci-dessous §\ref{ssec:gui_use}). Elle supporte sans ralentissement les quelques $25\text{Mo}$ d'entrée par seconde en mode \emph{fast}.
 
 \subsection{Utilisation} \label{ssec:gui_use}
 
@@ -320,7 +320,7 @@ Le thread de lecture, quant à lui, a été bien plus optimisé. Les modèles su
 
 \item On lit en continu des blocs de 16 caractères et, à chaque demande de rafraîchissement, on renvoie les 16 derniers acquis. Cette option marchait bien, mais était trop lente.
 
-\item La \og boucle infinie \fg{} de lecture étant gérée avec Qt, le modèle signal/slot impose de faire en réalité une fonction de lecture se terminant par l'empilement d'un événement \og appeler la fonction de lecture \fg{}. Cette procédure est très coûteuse (beaucoup plus que \lstc{getchar}~!). Ainsi nous ignorons systématiquement 6 blocs sur 7~: la fonction de lecture lit $7 \times 16$ caractères et ne conserve que les 16 derniers. La fréquence de notre processeur nous permet (et nous oblige) à procéder de la sorte pour avoir une vitesse d'affichage raisonnable.
+\item La \og boucle infinie \fg{} de lecture étant gérée avec Qt, le modèle signal/slot impose de faire en réalité une fonction de lecture se terminant par l'empilement d'un événement \og appeler la fonction de lecture \fg{}. Cette procédure est très coûteuse (beaucoup plus que \lstc{getchar}~!). Ainsi nous ignorons systématiquement 12 blocs sur 13~: la fonction de lecture lit $13 \times 16$ caractères et ne conserve que les 16 derniers. La fréquence de notre processeur nous permet (et nous oblige) à procéder de la sorte pour avoir une vitesse d'affichage raisonnable.
 \end{itemize}
 
 Avec ce fonctionnement, nous arrivons à une horloge capable de supporter l'entrée massive qui lui est fournie chaque seconde, sans ralentir le système global.
