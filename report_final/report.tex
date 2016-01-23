@@ -50,24 +50,25 @@ En définitive, les programmes obtenus, une fois combinés correctement, répond
 \todo{abstract ?}
 \relire
 \relu{Nathanaël}
+\relu{No}
 
 \subsection{Utilisation}
 
 La compilation de toutes les composantes du projet s'effectue simplement par un \lstbash{make} à la racine du projet. Les dépendances suivantes sont toutefois nécessaires~:
 
 \begin{itemize}
-\item OCaml~: \lstbash{ocamlbuild}, \lstbash{ocamlopt}, \lstbash{ocamllex}, \lstbash{menhir}
-\item C~: \lstbash{gcc}
-\item C++~: \lstbash{g++}
-\item Python~: \lstbash{python3}
-\item Qt version $\geq 4$, \lstbash{qmake}
-\item Un environnement bash
+\item OCaml~: \lstbash{ocamlbuild}, \lstbash{ocamlopt}, \lstbash{ocamllex}, \lstbash{menhir}~;
+\item C~: \lstbash{gcc}~;
+\item C++~: \lstbash{g++}~;
+\item Python~: \lstbash{python3}~;
+\item Qt version $\geq 4$, \lstbash{qmake}~;
+\item un environnement bash.
 \end{itemize}
 
 Le lancement de l'horloge peut se faire dans trois modes~:
 \begin{itemize}
 \item temps réel~: \lstbash{make run} ou \lstbash{./run_realtime.sh}, horloge en temps réel synchronisée sur le temps système à l'initialisation~;
-\item rapide~: \lstbash{make run-fast} ou \lstbash{./run_fast.sh}, horloge en accéléré initialisée sur le temps système~;
+\item rapide~: \lstbash{make run-fast} ou \lstbash{./run_fast.sh}, horloge en accéléré initialisée sur le temps du système~;
 \item rapide, initialisé à 0~: \lstbash{./run_fast_0.sh}, horloge en accéléré initialisée au 1er janvier 0000, \verb!00:00:00!, utile pour évaluer la performance.
 \end{itemize}
 
@@ -75,11 +76,11 @@ Le lancement de l'horloge peut se faire dans trois modes~:
 
 Les éléments du projet sont répartis dans des dossiers comme il suit~:
 \begin{itemize}
-\item \texttt{assember}~: l'assembleur pour notre processeur (§\ref{sec:cas})
-\item \texttt{clock}~: les codes assembleur de nos programmes d'horloge et nos quartz (§\ref{sec:clock})
-\item \texttt{display\_gui}~: l'interface d'affichage (§\ref{sec:gui})
-\item \texttt{processor}~: le code produisant la netlist de notre processeur (§\ref{sec:proc})
-\item \texttt{simulator}~: le compilateur de netlists (§\ref{sec:compilo})
+\item \texttt{assembler}~: l'assembleur pour notre processeur (§\ref{sec:cas})~;
+\item \texttt{clock}~: les codes assembleur de nos programmes d'horloge et nos quartz (§\ref{sec:clock})~;
+\item \texttt{display\_gui}~: l'interface d'affichage (§\ref{sec:gui})~;
+\item \texttt{processor}~: le code produisant la netlist de notre processeur (§\ref{sec:proc})~;
+\item \texttt{simulator}~: le compilateur de netlists (§\ref{sec:compilo}).
 \end{itemize}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -92,6 +93,7 @@ Les éléments du projet sont répartis dans des dossiers comme il suit~:
 
 \relire
 \relu{Nathanaël}
+\relu{No}
 
 \subsection{Utilisation}
 
@@ -107,23 +109,23 @@ L'utilisation du compilateur est la suivante~:
 Le compilateur produira un fichier C \verb!fichier.c!, et un fichier
 éxécutable \verb!fichier!. Les options acceptées sont les suivantes~:
 \begin{itemize}
-\item{\verb!-print!~: N'écrit que le code C, en particulier, ne
-    produit pas l'éxécutable \verb!fichier!.}
-\item{\verb!-iomode!~$n$~: Choisit le mode d'entrée-sortie de la
+\item{\verb!-print!~: n'écrit que le code C, en particulier, ne
+    produit pas l'éxécutable \verb!fichier!~;}
+\item{\verb!-iomode!~$n$~: choisit le mode d'entrée-sortie de la
     netlist compilée. Les modes d'entrée-sortie sont les suivants~:
     \begin{itemize}
-    \item{0~: Entrées-sorties interactives, les nappes de fils étant
+    \item{0~: entrées-sorties interactives, les nappes de fils étant
         considérées comme des entiers 64 bits non signés, qui sont
         affichés et demandés à l'utilisateur en décimal. C'est la
-        valeur par défaut.}
-    \item{1~: Chaque bit d'entrée-sortie est représenté par un
-        caractère \verb!'0'! ou \verb!'1'!.}
-    \item{2~: Chaque nappe d'entrée-sortie est représentée de la
+        valeur par défaut~;}
+    \item{1~: chaque bit d'entrée-sortie est représenté par un
+        caractère \verb!'0'! ou \verb!'1'!~;}
+    \item{2~: chaque nappe d'entrée-sortie est représentée de la
         manière la plus compacte possible sur un nombre entier de
-        caractères~; dans l'ordre \textit{big-endian}.}
+        caractères, dans l'ordre \textit{big-endian}~;}
     \end{itemize}
 }
-\item{\verb!-n!~$n$~: Nombre de cycles à simuler. Si $n$ est omis, il
+\item{\verb!-n!~$n$~: nombre de cycles à simuler. Si $n$ est omis, il
     est pris comme égal à $+\infty$.}
 \end{itemize}
 
@@ -244,7 +246,8 @@ Pour plus de détails sur l'assembleur utilisé, consultez le rapport précéden
 \subsection{Détail des unités}
 
 \subsubsection{ALU} \label{sssec:procunit_alu}
-\todo{No}
+
+\relire
 
 Grâce à un choix adapté des opcodes pour les bonnes opérations, on limite ici le nombre de multiplexeurs utilisés.
 
@@ -281,6 +284,9 @@ Accède à la ROM à chaque cycle pour récupérer l'instruction sous le \textit
 \todo{Nath}
 
 \subsubsection{Result selector}
+
+\relire
+
 Choisit simplement la valeur écrite dans les registres entre celle donnée par la \textit{memory unit} (§\ref{sssec:procunit_mem}) et celle donnée par l'ALU (§\ref{sssec:procunit_alu}) en fonction de l'opcode.
 
 Il ne s'agit ici que d'un multiplexeur~: si l'instruction a son premier et son quatrième bit égaux à $1$, on sélectionne le résultat d'un accès mémoire~; sinon, on sélectionne le résultat donné par l'ALU.
