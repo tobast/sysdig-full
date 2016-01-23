@@ -253,11 +253,11 @@ L'ALU commence par déterminer les $op_1$ et $op_2$ adaptés à l'opération con
 
 \item si le dernier bit de l'instruction est un $1$ (vrai dans le cas de \lstc{SUB} et \lstc{BIC}), l'$op_2$ utilisé sera la négation de celui fournit par l'op2selector (en prenant en compte la retenue dans le cas de la soustraction, on retrouve bien l'opposé de l'$op_2$ donné à la base)~;
 
-\item si le deuxième bit de l'instruction est un $1$, et uniquement dans le cas des opérations arithmétiques (donc seulement das le cas de l'opération \lstc{RSB}), l'$op_1$ utilisé sera la négation de celui fourni par l'op1selector.
+\item si le deuxième bit de l'instruction est un $1$, et uniquement dans le cas des opérations arithmétiques (donc seulement dans le cas de l'opération \lstc{RSB}), l'$op_1$ utilisé sera la négation de celui fourni par l'op1selector.
 
 \end{itemize}
 
-L'ALU calcule ensuite séparément les résultats de toutes les opérations booléennes ainsi qu'un unique résultat arithmétique, qui sera une addition ou une soustraction (dans un sens ou dans l'autre) en fonction des $op_1$ et $op_2$ sélectionnés plus tôt. Nous justifions cette séparation par le fait qu'une structure d'additionneur est suffisamment importante pour la limiter à une unique occurrence, alors que les différente opérations booléennes, en plus d'être difficile à combiner (à l'exception de \lstc{AND} et \lstc{BIC}, qui l'ont été), sont nettement moins coûteuses en terme de nombre de portes logiques.
+L'ALU calcule ensuite séparément les résultats de toutes les opérations booléennes ainsi qu'un unique résultat arithmétique, qui sera une addition ou une soustraction (dans un sens ou dans l'autre) en fonction des $op_1$ et $op_2$ sélectionnés plus tôt. Nous justifions cette séparation par le fait qu'une structure d'additionneur est suffisamment importante pour la limiter à une unique occurrence, alors que les différentes opérations booléennes, en plus d'être difficile à combiner (à l'exception de \lstc{AND} et \lstc{BIC}, qui l'ont été), sont nettement moins coûteuses en terme de nombre de portes logiques.
 
 Enfin, l'ALU sélectionne la bonne sortie parmi toutes celles calculées. En particulier, un troisième bit à $0$ indique une opération arithmétique, tandis qu'un $1$ indique une opération booléenne.
 
