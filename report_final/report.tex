@@ -153,7 +153,7 @@ ne sont pas supportées du tout. Cela n'affecte pas notre processeur,
 On utilise bien sûr des opérations bit-à-bit lors d'opérations comme
 \verb!AND!, \verb!OR! ou \verb!MUX! sur des nappes de fils.
 
-De plus, on garde une table de permettant de savoir où trouver chaque
+De plus, on garde une table de \todo{Une table de quoi ?} permettant de savoir où trouver chaque
 nappe de fils ou fil (i.e. dans quelle variable, et sa position
 interne à cette variable), ce qui permet de drastiquement diminuer le
 nombre d'opérations \verb!SLICE!, \verb!SELECT! et \verb!CONCAT!. Le
@@ -208,12 +208,41 @@ Nous avons fait le choix d'écrire notre processeur en Python~: le code, une foi
 À chaque cycle, il est possible d'écrire sur \emph{un} registre et d'en lire \emph{deux} (indiqués par leur adresse), à l'exception du PC qui est systématiquement donné à l'\textit{opcode unit} (§\ref{sssec:procunit_opcode}).
 
 \subsubsection{Opcodes} \label{sssec:opcodes}
+
+
 \subsubsection{Opérations assembleur supportées}
+
+Les opérations assembleur supportées sont~:
+\begin{itemize}
+\item \lstbash{ADD}~: addition
+\item \lstbash{ADC}~: addition avec ajout du \textit{carry bit} de la précédente opération
+\item \lstbash{SUB}~: soustraction
+\item \lstbash{SBC}~: soustraction + carry - 1
+\item \lstbash{RSB}~: soustraction inversée ($op_2 - op_1$)
+\item \lstbash{RSC}~: soustraction inversée + carry - 1
+\item \lstbash{AND}~: et logique
+\item \lstbash{EOR}~: ou exclusif logique
+\item \lstbash{ORR}~: ou logique
+\item \lstbash{BIC}~: $op_1$ AND NOT $op_2$
+\item \lstbash{CMP}~: soustraction sans conserver le résultat (lève les flags)
+\item \lstbash{CMN}~: addition sans conserver le résultat
+\item \lstbash{TST}~: et logique sans conserver le résultat
+\item \lstbash{TEQ}~: ou exclusif logique sans conserver le résultat
+\item \lstbash{MOV}~: déplacement d'$op_2$ vers un registre
+\item \lstbash{MVN}~: déplacement de NOT $op_2$ vers un registre
+\item \lstbash{LDR}~: accès RAM en lecture
+\item \lstbash{STR}~: accès RAM en écriture
+\item \lstbash{JMP}~: saut vers un label (sucre syntaxique~: est assemblé en une opération sur \texttt{\%r00})
+\end{itemize}
+
+Chaque opération peut être assortie d'une conditionnelle dépendant des flags placés par la dernière opération.
+
+Pour plus de détails sur l'assembleur utilisé, consultez le rapport précédent mis à jour~: \url{https://frama.link/sysdig_arch}.
 
 %%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Détail des unités}
 
-\subsubsection{ALU}
+\subsubsection{ALU} \label{sssec:procunit_alu}
 \todo{No}
 
 \subsubsection{Flags unit}
@@ -236,7 +265,7 @@ Accède à la ROM à chaque cycle pour récupérer l'instruction sous le \textit
 \todo{Nath}
 
 \subsubsection{Result selector}
-\todo{No (?)}
+Choisit simplement la valeur écrite dans les registres entre celle donnée par la \textit{memory unit} (§\ref{sssec:procunit_mem}) et celle donnée par l'ALU (§\ref{sssec:procunit_alu}) en fonction de l'opcode.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Assembleur} \label{sec:cas}
@@ -267,8 +296,6 @@ fichiers \verb!clock/clock.s! pour la version rapide, et
 \verb!clock/clock_fast.s! pour la version temps réel.
 
 \subsection{Lecture de l'entrée}
-
-\todo{Parler des quartz}
 
 Pendant les 7 premiers cycles, le processeur reçoit l'heure actuelle
 dans son registre d'entrée, sous forme secondes, minutes, heures,
@@ -344,6 +371,19 @@ uniquement des \verb!NOP! cette fois-ci. On effectue enfin un saut
 dans la boucle principale une fois que le nombre de secondes est
 revenu à 0, ce qui permet à celle-ci de fonctionner correctement.
 
+\subsection{Génération de l'entrée standard}
+\relire
+
+Pour générer une entrée standard adéquate pour le processeur, nous avons commencé par utiliser un programme Python (\texttt{clock/quartz.py}) donnant au processeur la date et l'heure actuelle, puis, selon le mode souhaité, soit contrôle ses temps de \lstbash{sleep} pour avoir exactement un incrément par seconde réelle, soit se termine pour que le programme reçoive \texttt{/dev/null} comme entrée standard.
+
+Nous avons remarqué que dans le second cas, cette procédure de remplacement de l'entrée était \emph{très} lente. En effet, après avoir reprogrammé le quartz en C (\texttt{clock/quartz.c}) pour initialiser l'horloge, puis faire des \lstc{putchar(0);} en boucle infinie, nous avons constaté une amélioration des performances de l'ordre de $300\%$.
+
+Le modèle final adopté est donc~:
+\begin{itemize}
+\item \texttt{clock/quartz.py} pour le mode temps réel (les performances ne sont pas si importantes)~;
+\item \texttt{clock/quartz.c} pour le mode rapide~;
+\item \texttt{clock/quartz0.c} pour le benchmarking, qui initialise l'heure à \verb!00:00:00 01-01-0000!, ce qui est plus simple à lire dans le cadre du benchmarking.
+\end{itemize}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Interface de sortie} \label{sec:gui}
@@ -366,6 +406,7 @@ La compilation s'effectue par un simple \lstbash{qmake && make} dans le dossier 
 \vspace{-2em}
 \caption{Ordre des segments. Crédit~: H2g2bob @ Wikipedia}
 \label{fig:segorder}
+\vspace{-2em}
 \end{wrapfigure}
 
 Le programme ne prend aucun argument. Il attend sur son entrée standard des caractères formatés comme la sortie du processeur (§\ref{ssec:compilo_io}), c'est-à-dire 16 caractères à la suite. Les caractères contrôlent chacun un afficheur, dans l'ordre \verb!--HHMMSSYYYYMMDD! respectivement heure à deux chiffres, minutes, secondes, année à 4 chiffres, mois, jour.
