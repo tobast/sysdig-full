@@ -143,7 +143,25 @@ Nous avons fait le choix d'écrire notre processeur en Python~: le code, une foi
 \subsection{Architecture du processeur}
 
 \subsubsection{Mémoires et registres} \label{sssec:memory}
-\todo{RAM, ROM, registres (dont PC)}
+\relire
+
+\noindent Notre processeur comporte trois types de mémoire~:
+\begin{itemize}
+\item la ROM, dans laquelle est stockée exclusivement et intégralement le programme généré par notre assembleur, sous forme d'\textit{opcodes} (§\ref{sssec:opcodes})~;
+
+\item la RAM, initialement vide et accessible via la \textit{memory unit} (§\ref{sssec:procunit_mem})~;
+\item les registres, au nombre de 16, nommés \texttt{\%r00} \ldots \texttt{\%r15}.
+\end{itemize}
+
+\noindent Plusieurs registres ont des fonctions spéciales dans le processeur~:
+\begin{itemize}
+\item \texttt{\%r00} est le \emph{program counter} (PC)~: il contient l'adresse dans la ROM de l'instruction actuelle. S'il n'est pas modifié au cours d'un cycle CPU, il est incrémenté. En particulier, un saut dans le programme n'est rien d'autre qu'une modification de ce registre.
+\item \texttt{\%r01} est le \emph{registre d'entrée}~: à chaque cycle, le processeur lit sur l'entrée standard une valeur 64 bits et l'y stocke.
+\item \texttt{\%r02}, \texttt{\%r03} sont les \emph{registres de sortie}~: à chaque fin de cycle, le processeur écrit sur la sortie standard les valeurs 64 bits contenues dans ces registres.
+\end{itemize}
+
+À chaque cycle, il est possible d'écrire sur \emph{un} registre et d'en lire \emph{deux} (indiqués par leur adresse), à l'exception du PC qui est systématiquement donné à l'\textit{opcode unit} (§\ref{sssec:procunit_opcode}).
+
 \subsubsection{Opcodes} \label{sssec:opcodes}
 \subsubsection{Opérations assembleur supportées}
 
@@ -154,19 +172,20 @@ Nous avons fait le choix d'écrire notre processeur en Python~: le code, une foi
 \todo{No}
 
 \subsubsection{Flags unit}
-\todo{Théo}
 
-\subsubsection{Memory unit}
+Son but est de stocker les flags et de donner la valeur logique d'une conditionnelle (l'une des 16, \textit{eg.} \lstbash{GE}). Elle contient donc un registre de nappe de taille 4 et un arbre de \texttt{MUX}.
+
+\subsubsection{Memory unit} \label{sssec:procunit_mem}
 \todo{Nathanaël}
 
 \subsubsection{$op_1$ unit}
-\todo{Théo}
+Essentiellement un fil entre la sortie $op_1$ des registres et l'entrée $op_1$ de l'ALU, sauf lorsqu'on demande à $op_1$ d'être nul (utile pour les sauts).
 
 \subsubsection{$op_2$ unit}
-\todo{Théo}
+Choisit entre la sortie $op_2$ des registres et la constante littérale qui lui est donnée dans l'opcode~; contient le barrel shifter de l'$op_2$.
 
-\subsubsection{Opcode unit}
-\todo{Théo}
+\subsubsection{Opcode unit} \label{sssec:procunit_opcode}
+Accède à la ROM à chaque cycle pour récupérer l'instruction sous le \textit{program counter} (fourni par les registres). Communique avec la \textit{flags unit} pour déterminer si l'éventuelle conditionnelle passée est vérifiée ou non. Si ce n'est pas le cas, désactive l'écriture dans les registres, dans la RAM et dans les flags (l'instruction est quand même exécutée, mais sans aucun effet).
 
 \subsubsection{Registers unit}
 \todo{Nath}
