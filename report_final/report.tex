@@ -62,8 +62,7 @@ La compilation de toutes les composantes du projet s'effectue simplement par un 
 Le lancement de l'horloge peut se faire dans trois modes~:
 \begin{itemize}
 \item temps réel~: \lstbash{make run} ou \lstbash{./run_realtime.sh}, horloge en temps réel synchronisée sur le temps système à l'initialisation~;
-\item rapide~: \lstbash{make run-fast} ou \lstbash{./run_fast.sh}, horloge en accéléré initialisée sur le temps système~;
-\item très rapide~: \lstbash{make run-very-fast} ou \lstbash{./run_very_fast.sh}, horloge en accélérée non-initialisée sur le temps système, ce qui permet de lui fournir comme entrée \texttt{/dev/null}, doublant presque les performances.
+\item rapide~: \lstbash{make run-fast} ou \lstbash{./run_fast.sh}, horloge en accéléré initialisée sur le temps système.
 \end{itemize}
 
 \subsection{Organisation du projet}
@@ -125,7 +124,7 @@ contenant l'état initial de la \textsc{rom}.
 \subsection{Fonctionnement}
 
 \subsection{Entrées/sorties} \label{ssec:compilo_io}
-\todo{Euh, c'est censé être pour quoi ça~? (Nathanaël)}
+\todo{À supprimer, faudra faire la référence autre part}
 
 \subsection{Optimisations}
 \todo{Parce que ça a beau être dégueu, ça a la classe d'en parler :D}
@@ -288,6 +287,8 @@ revenu à 0, ce qui permet à celle-ci de fonctionner correctement.
 \relu{Nathanaël}
 
 L'interface, programmée en C++ avec Qt, est composée de 14 afficheurs 7 segments, pilotés par l'entrée standard (détaillé ci-dessous §\ref{ssec:gui_use}). Elle supporte sans ralentissement les quelques $12\text{Mo}$ d'entrée par seconde en mode \emph{fast}.
+
+\todo{Aussi, ça serait pas 20 voire un peu plus maintenant ? :D}
 
 \subsection{Utilisation} \label{ssec:gui_use}
 

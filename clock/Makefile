@@ -5,7 +5,7 @@ QUARTZ=quartz
 all: $(CLOCKS) $(QUARTZ)
 
 $(QUARTZ): $(QUARTZ).c
-	gcc -O2 $< -o $@ 
+	gcc -std=c99 -O2 $< -o $@ 
 
 %.bin: %.s
 	$(CAS) $<
