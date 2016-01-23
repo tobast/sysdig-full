@@ -38,5 +38,3 @@ run: all
 run-fast: all
 	bash ./run_fast.sh
 
-run-very-fast: all
-	bash ./run_very_fast
