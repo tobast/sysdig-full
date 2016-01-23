@@ -19,7 +19,7 @@ int main() {
 	print_int64(curTime->tm_mday);
 	print_int64(curTime->tm_mon);
 	print_int64(curTime->tm_year % 100);
-	print_int64((curTime->tm_year / 100) - 10);
+	print_int64(curTime->tm_year / 100);
 
 	while(1) {
 		putchar(0);
