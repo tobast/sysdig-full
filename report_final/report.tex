@@ -51,6 +51,7 @@ En définitive, les programmes obtenus, une fois combinés correctement, répond
 \relire
 \relu{Nathanaël}
 \relu{No}
+\relu{Théo}
 
 \subsection{Utilisation}
 
@@ -94,6 +95,7 @@ Les éléments du projet sont répartis dans des dossiers comme il suit~:
 \relire
 \relu{Nathanaël}
 \relu{No}
+\relu{Théo}
 
 \subsection{Utilisation}
 
@@ -145,13 +147,12 @@ Les nappes de fils sont stockées dans des entiers 64 bits~; en
 particulier, cela implique que les nappes de fils de plus de 64 bits
 ne sont pas supportées facilement. Par souci de simplicité, ces nappes
 ne sont pas supportées du tout. Cela n'affecte pas notre processeur,
-étant donnée que celui-ci n'utilise que des nappes d'au plus 64 bits.
+étant donné que celui-ci n'utilise que des nappes d'au plus 64 bits.
 
 \subsection{Entrées/sorties} \label{ssec:compilo_io}
 \todo{À supprimer, faudra faire la référence autre part}
 
 \subsection{Optimisations}
-\todo{Parce que ça a beau être dégueu, ça a la classe d'en parler :D}
 
 On utilise bien sûr des opérations bit-à-bit lors d'opérations comme
 \verb!AND!, \verb!OR! ou \verb!MUX! sur des nappes de fils.
@@ -182,6 +183,7 @@ On effectue donc une simplification assez importante de la netlist de cette mani
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \relire
+\relu{Théo}
 
 Nous avons fait le choix d'écrire notre processeur en Python~: le code, une fois exécuté, produit un fichier de netlist qui peut être compilé avec le compilateur de circuits (§\ref{sec:compilo}). Le code a été conçu modulairement, avec un fichier Python par sous-unité du processeur (ALU, \ldots). Le fichier \lstbash{main.py} se charge donc exclusivement de faire le lien entre ces unités, \og branchant \fg{} des fils d'une unité à l'autre~; tandis que \lstbash{netlist.py} définit les fonctions à appeler pour construire la netlist en mémoire, affichable à la fin.
 
@@ -192,10 +194,11 @@ Nous avons fait le choix d'écrire notre processeur en Python~: le code, une foi
 
 \subsubsection{Mémoires et registres} \label{sssec:memory}
 \relire
+\relu{Théo}
 
 \noindent Notre processeur comporte trois types de mémoire~:
 \begin{itemize}
-\item la ROM, dans laquelle est stockée exclusivement et intégralement le programme généré par notre assembleur, sous forme d'\textit{opcodes} (§\ref{sssec:opcodes})~;
+\item la ROM, dans laquelle est stocké exclusivement et intégralement le programme généré par notre assembleur, sous forme d'\textit{opcodes} (§\ref{sssec:opcodes})~;
 
 \item la RAM, initialement vide et accessible via la \textit{memory unit} (§\ref{sssec:procunit_mem})~;
 \item les registres, au nombre de 16, nommés \texttt{\%r00} \ldots \texttt{\%r15}.
@@ -203,7 +206,7 @@ Nous avons fait le choix d'écrire notre processeur en Python~: le code, une foi
 
 \noindent Plusieurs registres ont des fonctions spéciales dans le processeur~:
 \begin{itemize}
-\item \texttt{\%r00} est le \emph{program counter} (PC)~: il contient l'adresse dans la ROM de l'instruction actuelle. S'il n'est pas modifié au cours d'un cycle CPU, il est incrémenté. En particulier, un saut dans le programme n'est rien d'autre qu'une modification de ce registre.
+\item \texttt{\%r00} est le \emph{program counter} (PC)~: il contient l'adresse dans la ROM de l'instruction actuelle. S'il n'est pas modifié au cours d'un cycle processeur, il est incrémenté. En particulier, un saut dans le programme n'est rien d'autre qu'une modification de ce registre.
 \item \texttt{\%r01} est le \emph{registre d'entrée}~: à chaque cycle, le processeur lit sur l'entrée standard une valeur 64 bits et l'y stocke.
 \item \texttt{\%r02}, \texttt{\%r03} sont les \emph{registres de sortie}~: à chaque fin de cycle, le processeur écrit sur la sortie standard les valeurs 64 bits contenues dans ces registres.
 \end{itemize}
@@ -212,6 +215,7 @@ Nous avons fait le choix d'écrire notre processeur en Python~: le code, une foi
 
 \subsubsection{Opcodes} \label{sssec:opcodes}
 
+\todo{Décrire comment ça marche}
 
 \subsubsection{Opérations assembleur supportées}
 
@@ -248,6 +252,7 @@ Pour plus de détails sur l'assembleur utilisé, consultez le rapport précéden
 \subsubsection{ALU} \label{sssec:procunit_alu}
 
 \relire
+\relu{Théo}
 
 Grâce à un choix adapté des opcodes pour les bonnes opérations, on limite ici le nombre de multiplexeurs utilisés.
 
@@ -260,7 +265,7 @@ L'ALU commence par déterminer les $op_1$ et $op_2$ adaptés à l'opération con
 
 \end{itemize}
 
-L'ALU calcule ensuite séparément les résultats de toutes les opérations booléennes ainsi qu'un unique résultat arithmétique, qui sera une addition ou une soustraction (dans un sens ou dans l'autre) en fonction des $op_1$ et $op_2$ sélectionnés plus tôt. Nous justifions cette séparation par le fait qu'une structure d'additionneur est suffisamment importante pour la limiter à une unique occurrence, alors que les différentes opérations booléennes, en plus d'être difficile à combiner (à l'exception de \lstc{AND} et \lstc{BIC}, qui l'ont été), sont nettement moins coûteuses en terme de nombre de portes logiques.
+L'ALU calcule ensuite séparément les résultats de toutes les opérations booléennes ainsi qu'un unique résultat arithmétique, qui sera une addition ou une soustraction (dans un sens ou dans l'autre) en fonction des $op_1$ et $op_2$ sélectionnés plus tôt. Nous justifions cette séparation par le fait qu'une structure d'additionneur est suffisamment importante pour la limiter à une unique occurrence, alors que les différentes opérations booléennes, en plus d'être difficiles à combiner (à l'exception de \lstc{AND} et \lstc{BIC}, qui l'ont été), sont nettement moins coûteuses en terme de nombre de portes logiques.
 
 Enfin, l'ALU sélectionne la bonne sortie parmi toutes celles calculées. En particulier, un troisième bit à $0$ indique une opération arithmétique, tandis qu'un $1$ indique une opération booléenne.
 
@@ -278,7 +283,7 @@ Essentiellement un fil entre la sortie $op_1$ des registres et l'entrée $op_1$ 
 Choisit entre la sortie $op_2$ des registres et la constante littérale qui lui est donnée dans l'opcode~; contient le barrel shifter de l'$op_2$.
 
 \subsubsection{Opcode unit} \label{sssec:procunit_opcode}
-Accède à la ROM à chaque cycle pour récupérer l'instruction sous le \textit{program counter} (fourni par les registres). Communique avec la \textit{flags unit} pour déterminer si l'éventuelle conditionnelle passée est vérifiée ou non. Si ce n'est pas le cas, désactive l'écriture dans les registres, dans la RAM et dans les flags (l'instruction est quand même exécutée, mais sans aucun effet).
+Accède à la ROM à chaque cycle pour récupérer l'\textit{opcode} (§\ref{sssec:opcodes}) sous le \textit{program counter} (fourni par les registres). Communique avec la \textit{flags unit} pour déterminer si l'éventuelle conditionnelle passée est vérifiée ou non. Si ce n'est pas le cas, désactive l'écriture dans les registres, dans la RAM et dans les flags (l'instruction est quand même exécutée, mais sans aucun effet).
 
 \subsubsection{Registers unit}
 \todo{Nath}
@@ -286,6 +291,7 @@ Accède à la ROM à chaque cycle pour récupérer l'instruction sous le \textit
 \subsubsection{Result selector}
 
 \relire
+\relu{Théo}
 
 Choisit simplement la valeur écrite dans les registres entre celle donnée par la \textit{memory unit} (§\ref{sssec:procunit_mem}) et celle donnée par l'ALU (§\ref{sssec:procunit_alu}) en fonction de l'opcode.
 
