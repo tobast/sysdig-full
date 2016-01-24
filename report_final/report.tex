@@ -18,10 +18,12 @@
 
 \newcommand{\acronym}[1]{\MakeUppercase{#1}}
 
-\newcommand{\htodo}[1]{\begin{huge}\colorbox{yellow}{\textcolor{red}{\textbf{TODO~:} #1}}\end{huge}}
-\newcommand{\todo}[1]{\colorbox{yellow}{\textcolor{red}{\textbf{TODO~:} #1}}}
-\newcommand{\relire}{\colorbox{orange}{\textcolor{blue}{\textbf{RELIRE}~}}}
-\newcommand{\relu}[1]{\colorbox{green}{\textcolor{red}{\textbf{RELU~:} #1}}}
+%\newcommand{\htodo}[1]{\begin{huge}\colorbox{yellow}{\textcolor{red}{\textbf{TODO~:} #1}}\end{huge}}
+%\newcommand{\todo}[1]{\colorbox{yellow}{\textcolor{red}{\textbf{TODO~:} #1}}}
+%\newcommand{\relire}{\colorbox{orange}{\textcolor{blue}{\textbf{RELIRE}~}}}
+\newcommand{\relire}{}
+%\newcommand{\relu}[1]{\colorbox{green}{\textcolor{red}{\textbf{RELU~:} #1}}}
+\newcommand{\relu}[1]{}
 %TODO pour le rendu, supprimer ces commandes et recompiler pour s'assurer de ne pas avoir laissé de TODO
 
 \title{Rapport de projet -- Système digital}
@@ -481,7 +483,7 @@ L'interface, programmée en C++ avec Qt, est composée de 14 afficheurs 7 segmen
 
 La compilation s'effectue par un simple \lstbash{qmake && make} dans le dossier de l'interface (\texttt{display\_gui}), ou un \lstbash{make} dans le dossier du projet~; le binaire produit est \texttt{display\_gui/display\_gui}.
 
-\begin{wrapfigure}{r}{0.35\textwidth}
+\begin{wrapfigure}{R}{0.35\textwidth}
 \begin{center}
 \vspace{-1em}
 \includegraphics[width=0.2\textwidth]{imgs/7seg-labels.png}
