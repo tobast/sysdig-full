@@ -47,7 +47,6 @@ En définitive, les programmes obtenus, une fois combinés correctement, répond
 \section{Utilisation globale}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\todo{abstract ?}
 \relire
 \relu{Nathanaël}
 \relu{No}
@@ -88,9 +87,10 @@ Les éléments du projet sont répartis dans des dossiers comme il suit~:
 \section{Compilateur de netlists} \label{sec:compilo}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\todo{Abstract}
+\relire
+\relu{Théo}
 
-\todo{Euh, je mets quoi dans l'abstract~?}
+Pour des raisons de performances, nous avons préféré \emph{compiler} (et non interpréter) nos netlists. Notre compilateur compile les netlists vers du C, qui peuvent ensuite être compilées avec \lstbash{gcc} par exemple (optimisant encore le code produit avec \lstbash{-O2} ou autre option d'optimisation).
 
 \relire
 \relu{Nathanaël}
@@ -352,8 +352,6 @@ Il ne s'agit ici que d'un multiplexeur~: si l'instruction a son premier et son q
 \section{Assembleur} \label{sec:cas}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\htodo{Un peu tout le monde}
-
 L'assembleur est très probablement la partie la plus simple de notre projet~: les opcodes (§\ref{sssec:opcodes}) utilisés sont très simples à construire, ainsi notre assembleur (programmé en OCaml) est constitué d'un lexer/parser, d'un traducteur d'AST en opcodes, d'un \og linker \fg{} gérant les sauts (\lstasm{JMP}) et d'un module écrivant la ROM (§\ref{sssec:memory}) finale.
 
 \subsection{Gestion des sauts}
@@ -364,8 +362,6 @@ un label n'occupant aucune adresse et toutes les autres instructions
 en occupant une. Il suffit ensuite de remplacer une instruction
 \verb!JMP!~$l$ en \verb!MOV %r00, !$addr$, où $addr$ est l'adresse de
 $l$.
-
-\vspace{1em}\htodo{D'autres subsections ?}
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
