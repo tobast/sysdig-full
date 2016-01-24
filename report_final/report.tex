@@ -256,11 +256,11 @@ L'ALU commence par déterminer les $op_1$ et $op_2$ adaptés à l'opération con
 
 \item si le dernier bit de l'instruction est un $1$ (vrai dans le cas de \lstc{SUB} et \lstc{BIC}), l'$op_2$ utilisé sera la négation de celui fournit par l'op2selector (en prenant en compte la retenue dans le cas de la soustraction, on retrouve bien l'opposé de l'$op_2$ donné à la base)~;
 
-\item si le deuxième bit de l'instruction est un $1$, et uniquement dans le cas des opérations arithmétiques (donc seulement dans le cas de l'opération \lstc{RSB}), l'$op_1$ utilisé sera la négation de celui fourni par l'op1selector.
+\item si le deuxième bit de l'instruction est un $1$, et uniquement dans le cas des opérations arithmétiques (donc seulement das le cas de l'opération \lstc{RSB}), l'$op_1$ utilisé sera la négation de celui fourni par l'op1selector.
 
 \end{itemize}
 
-L'ALU calcule ensuite séparément les résultats de toutes les opérations booléennes ainsi qu'un unique résultat arithmétique, qui sera une addition ou une soustraction (dans un sens ou dans l'autre) en fonction des $op_1$ et $op_2$ sélectionnés plus tôt. Nous justifions cette séparation par le fait qu'une structure d'additionneur est suffisamment importante pour la limiter à une unique occurrence, alors que les différentes opérations booléennes, en plus d'être difficile à combiner (à l'exception de \lstc{AND} et \lstc{BIC}, qui l'ont été), sont nettement moins coûteuses en terme de nombre de portes logiques.
+L'ALU calcule ensuite séparément les résultats de toutes les opérations booléennes ainsi qu'un unique résultat arithmétique, qui sera une addition ou une soustraction (dans un sens ou dans l'autre) en fonction des $op_1$ et $op_2$ sélectionnés plus tôt. Nous justifions cette séparation par le fait qu'une structure d'additionneur est suffisamment importante pour la limiter à une unique occurrence, alors que les différente opérations booléennes, en plus d'être difficile à combiner (à l'exception de \lstc{AND} et \lstc{BIC}, qui l'ont été), sont nettement moins coûteuses en terme de nombre de portes logiques.
 
 Enfin, l'ALU sélectionne la bonne sortie parmi toutes celles calculées. En particulier, un troisième bit à $0$ indique une opération arithmétique, tandis qu'un $1$ indique une opération booléenne.
 
@@ -310,7 +310,7 @@ L'assembleur est très probablement la partie la plus simple de notre projet~: l
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \relire
-\relu{Nathanaël} \relu{Théo}
+\relu{Nathanaël} \relu{Théo} \relu{No}
 
 Le programme de l'horloge doit gérer l'heure et la date, mais
 également le décodage de celles-ci vers un affichage 7 segments, et
@@ -414,7 +414,7 @@ Le modèle final adopté est donc~:
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \relire \relu{Théo}
-\relu{Nathanaël}
+\relu{Nathanaël} \relu{No}
 
 L'interface, programmée en C++ avec Qt, est composée de 14 afficheurs 7 segments, pilotés par l'entrée standard (détaillé ci-dessous §\ref{ssec:gui_use}). Elle supporte sans ralentissement les quelques $25\text{Mo}$ d'entrée par seconde en mode \emph{fast}.
 
@@ -445,9 +445,9 @@ Le thread d'affichage est volontairement limité à 30 FPS~: 30 fois par seconde
 
 Le thread de lecture, quant à lui, a été bien plus optimisé. Les modèles suivants ont été considérés, successivement~:
 \begin{itemize}
-\item Lorsque des valeurs sont demandées, on lit 16 caractères sur \lstc{stdin}~; lorsque le rafraîchissement est terminé, on \lstc{fflush} l'entrée standard afin d'ignorer ce qui est arrivé pendant ce temps. Cette option n'a jamais fonctionné, d'autant qu'elle ferait perdre tout repère de \og début de bloc de 16 caractères \fg{}.
+\item lorsque des valeurs sont demandées, on lit 16 caractères sur \lstc{stdin}~; lorsque le rafraîchissement est terminé, on \lstc{fflush} l'entrée standard afin d'ignorer ce qui est arrivé pendant ce temps. Cette option n'a jamais fonctionné, d'autant qu'elle ferait perdre tout repère de \og début de bloc de 16 caractères \fg{}~;
 
-\item On lit en continu des blocs de 16 caractères et, à chaque demande de rafraîchissement, on renvoie les 16 derniers acquis. Cette option marchait bien, mais était trop lente.
+\item on lit en continu des blocs de 16 caractères et, à chaque demande de rafraîchissement, on renvoie les 16 derniers acquis. Cette option marchait bien, mais était trop lente~;
 
 \item La \og boucle infinie \fg{} de lecture étant gérée avec Qt, le modèle signal/slot impose de faire en réalité une fonction de lecture se terminant par l'empilement d'un événement \og appeler la fonction de lecture \fg{}. Cette procédure est très coûteuse (beaucoup plus que \lstc{getchar}~!). Ainsi nous ignorons systématiquement 12 blocs sur 13~: la fonction de lecture lit $13 \times 16$ caractères et ne conserve que les 16 derniers. La fréquence de notre processeur nous permet (et nous oblige) à procéder de la sorte pour avoir une vitesse d'affichage raisonnable.
 \end{itemize}
