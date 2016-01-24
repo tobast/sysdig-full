@@ -111,10 +111,10 @@ L'utilisation du compilateur est la suivante~:
 \lstbash{./compiler.native [options] fichier.net}
 
 Le compilateur produira un fichier C \verb!fichier.c!, et un fichier
-éxécutable \verb!fichier!. Les options acceptées sont les suivantes~:
+exécutable \verb!fichier!. Les options acceptées sont les suivantes~:
 \begin{itemize}
 \item{\verb!-print!~: n'écrit que le code C, en particulier, ne
-    produit pas l'éxécutable \verb!fichier!~;}
+    produit pas l'exécutable \verb!fichier!~;}
 \item{\verb!-iomode!~$n$~: choisit le mode d'entrée-sortie de la
     netlist compilée. Les modes d'entrée-sortie sont les suivants~:
     \begin{itemize}
@@ -242,7 +242,7 @@ Les instructions de l'assembleur sont traduites en \textit{opcodes} par l'assemb
 \begin{tabular}{|c|l|}
 \hline
 \textbf{Bits} & \textbf{Contenu} \\ \hline
-1 & Registre (\texttt{1}) ou constante (\texttt{2}) ? \\
+1 & Registre (\texttt{1}) ou constante (\texttt{0}) ? \\
 2 -- 17 & Constante (16 bits) \\
 18 -- 19 & Opération de shift \\
 20 -- 25 & Valeur du shift \\
