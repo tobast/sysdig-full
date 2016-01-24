@@ -30,6 +30,7 @@
 
 \relire
 \relu{No}
+\relu{Nathanaël}
 \begin{abstract}
 Notre objectif dans ce projet a été principalement d'avoir un code \emph{correct} et \emph{rapide à l'exécution}~; nous pensons avoir atteint ces deux objectifs. Dans ce but, nous avons commencé par implémenter non pas un simulateur, mais un \emph{compilateur} de netlists~; puis avons produit un code assembleur pour l'horloge extrêmement optimisé, tout en conservant un nombre constant de cycles processeur par incrément de seconde. Notre processeur en lui-même s'inspire fortement d'une architecture ARM, sans toutefois rechercher l'exhaustivité des opérations, ce qui nous a permis d'obtenir un processeur fonctionnel et composé de peu de portes, donc efficace. Pour finir, nous avons implémenté une GUI affichant un écran composé de blocs 7 segments, contrôlés directement par la sortie du processeur, optimisée jusqu'à ce que le programme limitant la vitesse d'exécution soit le processeur lui-même.
 
@@ -272,7 +273,10 @@ Enfin, l'ALU sélectionne la bonne sortie parmi toutes celles calculées. En par
 Son but est de stocker les flags et de donner la valeur logique d'une conditionnelle (l'une des 16, \textit{eg.} \lstbash{GE}). Elle contient donc un registre de nappe de taille 4 et un arbre de \texttt{MUX}.
 
 \subsubsection{Memory unit} \label{sssec:procunit_mem}
-\todo{Nathanaël}
+
+Gère l'accès à la \acronym{ram}, se contente de renvoyer le contenu de
+la mémoire à l'adresse indiquée, et d'écrire une valeur dans celle-ci
+à cette adresse si l'instruction est une instruction d'écriture.
 
 \subsubsection{$op_1$ unit}
 Essentiellement un fil entre la sortie $op_1$ des registres et l'entrée $op_1$ de l'ALU, sauf lorsqu'on demande à $op_1$ d'être nul (utile pour les sauts).
@@ -284,7 +288,14 @@ Choisit entre la sortie $op_2$ des registres et la constante littérale qui lui 
 Accède à la ROM à chaque cycle pour récupérer l'\textit{opcode} (§\ref{sssec:opcodes}) sous le \textit{program counter} (fourni par les registres). Communique avec la \textit{flags unit} pour déterminer si l'éventuelle conditionnelle passée est vérifiée ou non. Si ce n'est pas le cas, désactive l'écriture dans les registres, dans la RAM et dans les flags (l'instruction est quand même exécutée, mais sans aucun effet).
 
 \subsubsection{Registers unit}
-\todo{Nath}
+
+Crée 16 registres, dans lesquels on peut lire et écrire~; certains
+sont particuliers car sont le \textit{program counter}, le registre
+d'entrée ou un des registres de sortie. Le \textit{program counter}
+est incrémenté de 1 si on ne lui met pas une nouvelle valeur,
+contrairement aux autres registres qui restent inchangés. Des arbres
+de \verb!MUX!/\verb!DEMUX! permettent d'indexer les registres par une
+adresse sur 4 bits.
 
 \subsubsection{Result selector}
 
@@ -304,7 +315,13 @@ Il ne s'agit ici que d'un multiplexeur~: si l'instruction a son premier et son q
 L'assembleur est très probablement la partie la plus simple de notre projet~: les opcodes (§\ref{sssec:opcodes}) utilisés sont très simples à construire, ainsi notre assembleur (programmé en OCaml) est constitué d'un lexer/parser, d'un traducteur d'AST en opcodes, d'un \og linker \fg{} gérant les sauts (\lstasm{JMP}) et d'un module écrivant la ROM (§\ref{sssec:memory}) finale.
 
 \subsection{Gestion des sauts}
-\todo{Nathanaël}
+
+Pour gérer les instructions \verb!JMP!, on se contente de commencer
+par calculer l'adresse de chaque label par un simple parcours du code,
+un label n'occupant aucune adresse et toutes les autres instructions
+en occupant une. Il suffit ensuite de remplacer une instruction
+\verb!JMP!~$l$ en \verb!MOV %r00, !$addr$, où $addr$ est l'adresse de
+$l$.
 
 \vspace{1em}\htodo{D'autres subsections ?}
 
