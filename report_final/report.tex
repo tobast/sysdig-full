@@ -7,6 +7,7 @@
 \usepackage{amssymb}
 \usepackage{graphicx}
 \usepackage{wrapfig}
+\usepackage{caption}
 \usepackage[left=2cm,right=2cm,top=2cm,bottom=2cm]{geometry}
 \author{Théophile \textsc{Bastian}, Noémie \textsc{Cartier}, Nathanaël \textsc{Courant}}
 
@@ -65,7 +66,7 @@ La compilation de toutes les composantes du projet s'effectue simplement par un 
 \item un environnement bash.
 \end{itemize}
 
-Le lancement de l'horloge peut se faire dans trois modes~:
+\noindent Le lancement de l'horloge peut se faire dans trois modes~:
 \begin{itemize}
 \item temps réel~: \lstbash{make run} ou \lstbash{./run_realtime.sh}, horloge en temps réel synchronisée sur le temps système à l'initialisation~;
 \item rapide~: \lstbash{make run-fast} ou \lstbash{./run_fast.sh}, horloge en accéléré initialisée sur le temps du système~;
@@ -148,9 +149,6 @@ ne sont pas supportées facilement. Par souci de simplicité, ces nappes
 ne sont pas supportées du tout. Cela n'affecte pas notre processeur,
 étant donné que celui-ci n'utilise que des nappes d'au plus 64 bits.
 
-\subsection{Entrées/sorties} \label{ssec:compilo_io}
-\todo{À supprimer, faudra faire la référence autre part}
-
 \subsection{Optimisations}
 
 On utilise bien sûr des opérations bit-à-bit lors d'opérations comme
@@ -186,8 +184,6 @@ On effectue donc une simplification assez importante de la netlist de cette mani
 
 Nous avons fait le choix d'écrire notre processeur en Python~: le code, une fois exécuté, produit un fichier de netlist qui peut être compilé avec le compilateur de circuits (§\ref{sec:compilo}). Le code a été conçu modulairement, avec un fichier Python par sous-unité du processeur (ALU, \ldots). Le fichier \lstbash{main.py} se charge donc exclusivement de faire le lien entre ces unités, \og branchant \fg{} des fils d'une unité à l'autre~; tandis que \lstbash{netlist.py} définit les fonctions à appeler pour construire la netlist en mémoire, affichable à la fin.
 
-\htodo{Tout le monde}
-
 %%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Architecture du processeur}
 
@@ -214,7 +210,53 @@ Nous avons fait le choix d'écrire notre processeur en Python~: le code, une foi
 
 \subsubsection{Opcodes} \label{sssec:opcodes}
 
-\todo{Décrire comment ça marche}
+\relire \relu{Théo}
+
+Les instructions de l'assembleur sont traduites en \textit{opcodes} par l'assembleur (§\ref{sec:cas}), des valeurs sur 64 bits décrivant intégralement une opération (\textit{ie.} un cycle) du processeur. Cet opcode est séparé en plusieurs morceaux ayant des significations différentes, aisément \textit{slicé} pour qu'une unité du processeur ne reçoive que la partie de l'\textit{opcode} pertinente.
+
+\vspace{1em}
+
+\begin{minipage}{0.45\linewidth}
+\begin{tabular}{|c|l|}
+\hline
+\textbf{Bits} & \textbf{Contenu}\\
+\hline
+1 -- 4 & Condition d'exécution \\
+5 -- 8 & Code de l'instruction \\
+9 & Écrire le résultat~? \\
+10 & Utiliser le \textit{carry bit}~?  \\
+11 & Écrire les flags~? \\
+12 -- 15 & Registre de destination \\
+16 -- 19 & $op_1$ \\
+20 & Remplacer $op_1$ par $0\cdots 0$~? \\
+21 -- 46 & $op_2$ \\ \hline
+\end{tabular}
+\captionof{table}{Contenu d'un opcode}
+\end{minipage}
+\hfill
+\begin{minipage}{0.45\linewidth}
+\begin{tabular}{|c|l|}
+\hline
+\textbf{Bits} & \textbf{Contenu} \\ \hline
+1 & Registre (\texttt{1}) ou constante (\texttt{2}) ? \\
+2 -- 17 & Constante (16 bits) \\
+18 -- 19 & Opération de shift \\
+20 -- 25 & Valeur du shift \\
+\hline
+\end{tabular}
+\captionof{table}{Contenu d'$op_2$ (positions relatives)}
+
+\vspace{2em}
+
+\begin{tabular}{|l|l|}
+\hline
+\textbf{Nom} & \textbf{Opération} \\ \hline
+\lstc{LSL} & Shift à gauche \\
+\lstc{LSR} & Shift logique à droite\\
+\lstc{ASR} & Shift arithmétique à droite \\ \hline
+\end{tabular}
+\captionof{table}{Opérations de shift}
+\end{minipage}
 
 \subsubsection{Opérations assembleur supportées}
 
@@ -454,7 +496,7 @@ La compilation s'effectue par un simple \lstbash{qmake && make} dans le dossier 
 \vspace{-2em}
 \end{wrapfigure}
 
-Le programme ne prend aucun argument. Il attend sur son entrée standard des caractères formatés comme la sortie du processeur (§\ref{ssec:compilo_io}), c'est-à-dire 16 caractères à la suite. Les caractères contrôlent chacun un afficheur, dans l'ordre \verb!--HHMMSSYYYYMMDD! respectivement heure à deux chiffres, minutes, secondes, année à 4 chiffres, mois, jour.
+Le programme ne prend aucun argument. Il attend sur son entrée standard des caractères formatés comme la sortie du processeur, c'est-à-dire 16 caractères à la suite. Les caractères contrôlent chacun un afficheur, dans l'ordre \verb!--HHMMSSYYYYMMDD! respectivement heure à deux chiffres, minutes, secondes, année à 4 chiffres, mois, jour.
 
 Les bits du caractère contrôlent les segments d'un afficheur, à savoir en commençant par les poids forts \verb!-gfedcba! (figure \ref{fig:segorder} ci-contre).
 
