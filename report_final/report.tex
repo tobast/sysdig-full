@@ -15,6 +15,8 @@
 
 \usepackage{my_hyperref} % Hyperref (pour les URLs, hyperliens, ... cliquables et colorés non-dégueulassement)
 
+\newcommand{\acronym}[1]{\MakeUppercase{#1}}
+
 \newcommand{\htodo}[1]{\begin{huge}\colorbox{yellow}{\textcolor{red}{\textbf{TODO~:} #1}}\end{huge}}
 \newcommand{\todo}[1]{\colorbox{yellow}{\textcolor{red}{\textbf{TODO~:} #1}}}
 \newcommand{\relire}{\colorbox{orange}{\textcolor{blue}{\textbf{RELIRE}~}}}
@@ -25,10 +27,6 @@
 \date{24 janvier 2016} % Date de rendu
 \begin{document}
 \maketitle
-
-\htodo{Se décider sur la typographie~: ALU ou \textsc{alu}~?}
-
-\todo{Idem pour RAM/\textsc{ram}, ROM/\textsc{rom}, ...}
 
 \relire
 \relu{No}
@@ -131,9 +129,9 @@ Le compilateur produira un fichier C \verb!fichier.c!, et un fichier
     est pris comme égal à $+\infty$.}
 \end{itemize}
 
-Le fichier éxécutable produit prend autant d'arguments que le nombre
-de \textsc{rom}s du circuit~; chacun étant un fichier binaire
-contenant l'état initial de la \textsc{rom}.
+Le fichier exécutable produit prend autant d'arguments que le nombre
+de \acronym{rom}s du circuit~; chacun étant un fichier binaire
+contenant l'état initial de la \acronym{rom}.
 
 \subsection{Fonctionnement}
 Le compilateur commence par ordonner les équations afin que celles-ci
@@ -173,7 +171,7 @@ le biais d'opérations \verb!CONCAT!), on optimise cela en utilisant un
 \verb!-! unaire~: \verb!sortie = (-(entrée&1))&!$masque$. Ceci permet
 d'éliminer un grand nombre d'opérations \verb!CONCAT! dues à
 l'extension d'un fil en une nappe, par exemple pour des \verb!MUX! ou
-pour l'\textsc{alu}.
+pour l'\acronym{alu}.
 
 On effectue donc une simplification assez importante de la netlist de cette manière.
 
@@ -389,7 +387,7 @@ secondes, pour attendre le signal de passage à la seconde suivante.
 \subsection{Initialisation}
 
 L'initialisation de l'horloge consiste à initialiser la mémoire
-\textsc{ram} avec les informations de décodage 7-segments, et le
+\acronym{ram} avec les informations de décodage 7-segments, et le
 nombre de jours dans chaque mois. On effectue ensuite un saut dans une
 version spécialisée de la boucle pour la première itération, qui
 initialise la sortie, qui calcule l'état de l'itération suivante, puis
