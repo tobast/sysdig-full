@@ -186,6 +186,8 @@ On effectue donc une simplification assez importante de la netlist de cette mani
 
 Nous avons fait le choix d'écrire notre processeur en Python~: le code, une fois exécuté, produit un fichier de netlist qui peut être compilé avec le compilateur de circuits (§\ref{sec:compilo}). Le code a été conçu modulairement, avec un fichier Python par sous-unité du processeur (ALU, \ldots). Le fichier \lstbash{main.py} se charge donc exclusivement de faire le lien entre ces unités, \og branchant \fg{} des fils d'une unité à l'autre~; tandis que \lstbash{netlist.py} définit les fonctions à appeler pour construire la netlist en mémoire, affichable à la fin.
 
+Au total, le processeur est composé de 1699 portes logiques (dont certaines sur des nappes de fils)~; dont seulement 698 en excluant les \lstc{CONCAT}, \lstc{SELECT}, \lstc{SLICE} (ce qui est pertinent puisque ces portes sont optimisées par le compilateur).
+
 %%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Architecture du processeur}
 
