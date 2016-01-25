@@ -21,14 +21,19 @@
  *
  * where the matrix is an unsigned char, its least significant bit being a and its (most significant - 1) being g
  */
-static const int SEG_HEIGHT=50, SEG_WIDTH=10;
+
+#ifndef SCALEFACT
+#define SCALEFACT 1.
+#endif
+
+static const int SEG_HEIGHT=SCALEFACT*50, SEG_WIDTH=SCALEFACT*10;
 class DigitalNumber : public QGraphicsItemGroup
 {
 	public:
         DigitalNumber();
         void setSegments(unsigned char matrix);
-		static int digitWidth() { return 3*SEG_WIDTH+SEG_HEIGHT; }
-		static int digitHeight() { return 5*SEG_WIDTH+2*SEG_HEIGHT; }
+		static int digitWidth() { return (3*SEG_WIDTH+SEG_HEIGHT); }
+		static int digitHeight() { return (5*SEG_WIDTH+2*SEG_HEIGHT); }
 
 	private: //meth
 		void buildWidget();
