@@ -13,6 +13,11 @@ def print_int64(n):
 
 def print_header():
 	dt = datetime.now()
+	sleep(1 - (dt.microsecond / 10**6) - 0.01)
+	while datetime.now().second == dt.second:
+		sleep(0.0001)
+	dt = datetime.now()
+
 	print_int64(dt.second)
 	print_int64(dt.minute)
 	print_int64(dt.hour)
@@ -21,15 +26,22 @@ def print_header():
 	print_int64(dt.year % 100)
 	print_int64(dt.year // 100)
 
-print_header()
-if len(argv) >= 2 and argv[1] == "init":
-	exit(0)
-t0 = time()
-while True:
-	t1 = time()
-	if t1 >= t0 + 1.:
-		t0 += 1.
-		print_1()
-	else:
+try:
+	print_header()
+	if len(argv) >= 2 and argv[1] == "init":
+		exit(0)
+
+	t0 = time()
+	for i in range(1000):
 		print_0()
-	sleep(0.0001)
+	while True:
+		t1 = time()
+		if t1 >= t0 + 1.:
+			t0 += 1.
+			print_1()
+		else:
+			print_0()
+		sleep(0.0001)
+
+except BrokenPipeError:
+	pass
