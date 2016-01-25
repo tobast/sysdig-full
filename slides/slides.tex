@@ -15,6 +15,10 @@
 %\institute{} 
 \date{26 janvier 2016} 
 %\subject{} 
+
+\usepackage{my_listings}
+
+
 \begin{document}
 
 \begin{frame}
@@ -39,7 +43,23 @@ Blah!!1
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Compilateur de netlists}
+\begin{frame}{Compilateur de netlists}
+Fonctionnement~:
+\begin{itemize}
+\item{Nappes de fils~: entiers 64 bits}
+\item{Tri topologique des équations}
+\item{Produire le code pour chaque équation}
+\end{itemize}
 
+Optimisations~:
+\begin{itemize}
+\item{Opérations \verb!SLICE!, \verb!SELECT!, \verb!CONCAT! quand on
+    peut}
+\item{Opérations bit-à-bit sur les nappes si possible}
+\item{\og{}\verb!-!\fg{} unaire pour étendre un fil en une nappe ayant cette
+    valeur}
+\end{itemize}
+\end{frame}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Assembleur}
@@ -80,5 +100,22 @@ Chacune peut-être assortie d'une conditionnelle en fonctions des flags placés 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Interface graphique}
+
+\begin{frame}{Interface graphique}
+\begin{itemize}
+\item C++, avec Qt
+\item Communication~: lit 16 caractères par rafraîchissement (\lstc{stdin})
+\item Un chiffre = un caractère~; un bit = un segment
+\item Affichage à 30 FPS
+\end{itemize}
+
+\noindent Optimisations~:
+\begin{itemize}
+\item \alert{Deux threads}~: affichage, lecture de l'entrée
+\item Première idée~: quand demandé, lire 16 caractères puis \lstc{fflush}
+\item Utilisé~: lire en continu, donner les 16 derniers
+\item Trop lent~: ignorer \alert{12 cycles sur 13} ($\in \mathcal{P}$)
+\end{itemize}
+\end{frame}
 
 \end{document}
