@@ -32,6 +32,19 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section*{Vue d'ensemble}
 
+\begin{frame}{Vue d'ensemble}
+\begin{itemize}
+\item Processeur généré en Python
+\item Netlist compilée vers C
+\item Sortie binaire envoyée sur une interface graphique
+\item Architecture inspirée d'ARM
+\end{itemize}
+Résultat~:
+\begin{itemize}
+\item \textit{Rapide}~: 9.25$j.s^{-1}$~; 11.5$j.s^{-1}$ en faisant fondre un processeur
+\item $1.6MHz$~; $2MHz$ en faisant fondre un processeur
+\end{itemize}
+\end{frame}
 
 \begin{frame}
 \setcounter{tocdepth}{1} % Limite la TOC à sections
@@ -162,6 +175,14 @@ Forme de l'opcode produit~:
 \item Utilisé~: lire en continu, donner les 16 derniers
 \item Trop lent~: ignorer \alert{12 cycles sur 13} ($\in \mathcal{P}$)
 \end{itemize}
+\end{frame}
+
+\section*{}
+
+\begin{frame}{Conclusion}
+\begin{center}\Huge
+Merci de votre attention~!
+\end{center}
 \end{frame}
 
 \end{document}
