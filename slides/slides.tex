@@ -44,7 +44,25 @@ Blah!!1
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Assembleur}
 
+\begin{frame}{Opérations de l'assembleur}
 
+Les opérations supportées par notre processeur~:
+
+\begin{itemize}
+\item opérations arithmétiques d'additions et de soustraction (avec et sans retenue), en retenant ou non le résultat~;
+
+\item opérations binaires classiques, en retenant ou non le résultat~;
+
+\item déplacements d'une valeur ou de son opposé d'un registre vers un autre~;
+
+\item accès RAM (en lecture ou en  écriture)~;
+
+\item le saut vers un label \lstc{JMP}.
+\end{itemize}
+
+Chacune peut-être assortie d'une conditionnelle en fonctions des flags placés par l'opération précédente.
+
+\end{frame}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Horloge}
