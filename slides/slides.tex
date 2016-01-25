@@ -15,6 +15,10 @@
 %\institute{} 
 \date{26 janvier 2016} 
 %\subject{} 
+
+\usepackage{my_listings}
+
+
 \begin{document}
 
 \begin{frame}
@@ -62,5 +66,22 @@ Blah!!1
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Interface graphique}
+
+\begin{frame}{Interface graphique}
+\begin{itemize}
+\item C++, avec Qt
+\item Communication~: lit 16 caractères par rafraîchissement (\lstc{stdin})
+\item Un chiffre = un caractère~; un bit = un segment
+\item Affichage à 30 FPS
+\end{itemize}
+
+\noindent Optimisations~:
+\begin{itemize}
+\item \alert{Deux threads}~: affichage, lecture de l'entrée
+\item Première idée~: quand demandé, lire 16 caractères puis \lstc{fflush}
+\item Utilisé~: lire en continu, donner les 16 derniers
+\item Trop lent~: ignorer \alert{12 cycles sur 13} ($\in \mathcal{P}$)
+\end{itemize}
+\end{frame}
 
 \end{document}
