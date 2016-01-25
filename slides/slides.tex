@@ -72,13 +72,9 @@ Les opérations supportées par notre processeur~:
 
 \begin{itemize}
 \item opérations arithmétiques d'additions et de soustraction~;
-
 \item opérations binaires classiques~;
-
 \item déplacements d'une valeur ou de son opposé d'un registre vers un autre~;
-
 \item accès RAM (en lecture ou en  écriture)~;
-
 \item saut vers un label \lstc{JMP}.
 \end{itemize}
 
@@ -115,22 +111,32 @@ Forme de l'opcode produit~:
 \subsection{Quartz}
 
 \subsection{Programme}
-\begin{frame}{Programme}
-\begin{itemize}
-\item{Boucle des secondes déroulée}
-\item{Une instruction sur deux~: mettre à jour l'affichage}
-\item{L'autre~: calculer l'affichage de la minute suivante}
-\item{Exactement 2 instructions par seconde simulée (optimal)}
-\item{Gestion des années bissextiles, y compris exceptions}
-\item{Initialisation~: difficulté}
-\end{itemize}
-\end{frame}
+
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Processeur}
 
+\subsection{Architecture}
 
+\begin{frame}{Architecture du processeur}
+
+\begin{itemize}
+\item basée sur ARM
+\item 16 registres
+\item registres spéciaux~: \lstc{\%r00}, \lstc{\%r01}, \lstc{\%r02}, \lstc{\%r03}
+\item prend ses instructions en ROM
+\item RAM et ROM indexée par 16 bits
+\item 1699 portes logiques, \alert{698} après optimisation
+\end{itemize}
+
+\end{frame}
+
+\subsection{Schéma}
+
+\begin{frame}{Schéma}
+
+\end{frame}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Interface graphique}
