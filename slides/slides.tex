@@ -42,7 +42,7 @@
 Résultat~:
 \begin{itemize}
 \item \textit{Rapide}~: 9.25$j.s^{-1}$~; 11.5$j.s^{-1}$ en faisant fondre un processeur
-\item $1.6MHz$~; $2MHz$ en faisant fondre un processeur
+\item $1.6MHz$~; $2MHz$ \textit{EFFUP}
 \end{itemize}
 \end{frame}
 
@@ -88,7 +88,7 @@ Les opérations supportées par notre processeur~:
 \item saut vers un label \lstc{JMP}.
 \end{itemize}
 
-Chacune peut-être assortie d'une conditionnelle en fonctions des flags placés par l'opération précédente.
+Chacune peut-être assortie d'une conditionnelle en fonctions des flags.
 
 \end{frame}
 
@@ -96,8 +96,12 @@ Chacune peut-être assortie d'une conditionnelle en fonctions des flags placés 
 
 \begin{frame}{Les opcodes}
 
+Une opération assembleur $\leadsto$ un \textit{opcode} (entier 64 bits)
+\vspace{1em}
+
 Forme de l'opcode produit~:
 
+\begin{center}
 \begin{tabular}{|c|c|l|}
 \hline
 \textbf{Bits} & \textbf{Longueur} & \textbf{Contenu}\\
@@ -112,6 +116,7 @@ Forme de l'opcode produit~:
 20 & 1 & Remplacer $op_1$ par $0\cdots 0$~? \\
 21 -- 46 & 25 & $op_2$ \\ \hline
 \end{tabular}
+\end{center}
 
 \end{frame}
 
@@ -137,7 +142,16 @@ Forme de l'opcode produit~:
 
 \subsection{Programme}
 
-
+\begin{frame}{Programme}
+\begin{itemize}
+\item{Boucle des secondes déroulée}
+\item{Une instruction sur deux~: mettre à jour l'affichage}
+\item{L'autre~: calculer l'affichage de la minute suivante}
+\item{Exactement 2 instructions par seconde simulée (optimal)}
+\item{Gestion des années bissextiles, y compris exceptions}
+\item{Initialisation~: difficile (début à une seconde quelconque)}
+\end{itemize}
+\end{frame}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Processeur}
@@ -152,7 +166,7 @@ Forme de l'opcode produit~:
 \item registres spéciaux~: \lstc{\%r00}, \lstc{\%r01}, \lstc{\%r02}, \lstc{\%r03}
 \item prend ses instructions en ROM
 \item RAM et ROM indexée par 16 bits
-\item 1699 portes logiques, \alert{698} après optimisation
+\item 1699 portes logiques, \alert{$\sim$700} après optimisation
 \end{itemize}
 
 \end{frame}
@@ -178,8 +192,8 @@ Forme de l'opcode produit~:
 \begin{itemize}
 \item \alert{Deux threads}~: affichage, lecture de l'entrée
 \item Première idée~: quand demandé, lire 16 caractères puis \lstc{fflush}
-\item Utilisé~: lire en continu, donner les 16 derniers
-\item Trop lent~: ignorer \alert{12 cycles sur 13} ($\in \mathcal{P}$)
+\item Utilisé~: lire en continu, donner les 16 derniers $\leadsto$ trop lent~!
+\item Finalement, on ignore \alert{12 cycles sur 13} ($\in \mathcal{P}$)
 \end{itemize}
 \end{frame}
 
