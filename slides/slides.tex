@@ -61,7 +61,50 @@ Optimisations~:
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Assembleur}
 
+\subsection{Opérations}
 
+\begin{frame}{Opérations de l'assembleur}
+
+Les opérations supportées par notre processeur~:
+
+\begin{itemize}
+\item opérations arithmétiques d'additions et de soustraction~;
+
+\item opérations binaires classiques~;
+
+\item déplacements d'une valeur ou de son opposé d'un registre vers un autre~;
+
+\item accès RAM (en lecture ou en  écriture)~;
+
+\item saut vers un label \lstc{JMP}.
+\end{itemize}
+
+Chacune peut-être assortie d'une conditionnelle en fonctions des flags placés par l'opération précédente.
+
+\end{frame}
+
+\subsection{Opcodes}
+
+\begin{frame}{Les opcodes}
+
+Forme de l'opcode produit~:
+
+\begin{tabular}{|c|c|l|}
+\hline
+\textbf{Bits} & \textbf{Longueur} & \textbf{Contenu}\\
+\hline
+1 -- 4 & 4 & Condition d'exécution \\
+5 -- 8 & 4 & Code de l'instruction \\
+9 & 1 & Écrire le résultat~? \\
+10 & 1 & Utiliser le \textit{carry bit}~?  \\
+11 & 1 & Écrire les flags~? \\
+12 -- 15 & 4 & Registre de destination \\
+16 -- 19 & 4 & $op_1$ \\
+20 & 1 & Remplacer $op_1$ par $0\cdots 0$~? \\
+21 -- 46 & 25 & $op_2$ \\ \hline
+\end{tabular}
+
+\end{frame}
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
