@@ -32,12 +32,9 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section*{Vue d'ensemble}
 
-\begin{frame}{Blah}
-Blah!!1
-\end{frame}
-
 
 \begin{frame}
+\setcounter{tocdepth}{1} % Limite la TOC à sections
 \tableofcontents
 \end{frame}
 
@@ -105,10 +102,25 @@ Forme de l'opcode produit~:
 
 \end{frame}
 
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Horloge}
 
 \subsection{Quartz}
+
+\begin{frame}{Quartz}
+\begin{itemize}
+\item \textit{Pipe} sur le processeur
+\item Initialise au temps voulu
+\item Horloge synchrone~: \alert{1} une fois par seconde (incrément), \alert{0} sinon
+\item Deux programmes distincts~:
+	\begin{itemize}
+	\item Synchrone~: code python (plus simple, moins rapide)
+	\item Rapide~: code C~; initialise, \lstc{while(1) \{ putchar(0); \}}
+	\end{itemize}
+\item Gain Python $\rightarrow$ C~: $\times 3$
+\end{itemize}
+\end{frame}
 
 \subsection{Programme}
 
