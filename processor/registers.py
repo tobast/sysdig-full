@@ -16,7 +16,9 @@ def register_pc(data, write_enable, destr = None):
 	u = nl.fresh(n)
 	destr = nl.REG(u, destr)
 	nl.push_context("incr")
+	nl.group_input(destr)
 	incremented, _ = alu.incr(n, destr)
+	nl.group_output(incremented)
 	nl.pop_context()
 	write_n = helpers.wire_expand(n, write_enable)
 	nl.MUX(incremented, data, write_n, u)
@@ -45,6 +47,7 @@ def demux_n(n, l, source, addr):
 def registers(set_val, r1addr, r2addr, setaddr, value, r1 = None, r2 = None,
 	      pc = None):
 	nl.push_context("registers")
+	nl.group_pins([set_val, r1addr, r2addr, setaddr, value], [r1, r2, pc])
 	n = nl.get_size(value)
 	regs = []
 	for i in range(constants.REGISTERS.number):
@@ -65,5 +68,6 @@ def registers(set_val, r1addr, r2addr, setaddr, value, r1 = None, r2 = None,
 	r1 = mux_n(addr_size, [r[1] for r in regs], r1addr, r1)
 	r2 = mux_n(addr_size, [r[1] for r in regs], r2addr, r2)
 	demux_n(addr_size, [r[0] for r in regs], set_val, setaddr)
+	nl.group_outputs([r1, r2, pc])
 	nl.pop_context()
 	return r1, r2, pc

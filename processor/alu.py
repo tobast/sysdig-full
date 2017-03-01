@@ -41,6 +41,7 @@ def full_adder_n(n, nappe1, nappe2, c_in, need_fl_V, \
 
 def alu(instr, useCarry, op1, op2, carryFlag, val = None, flags = None):
 	nl.push_context("alu")
+	nl.group_pins([instr, useCarry, op1, op2, carryFlag], [val, flags])
 	"""calcule les opposés de op1 et op2 si (et seulement si) nécessaire"""
 	op1_1 = nl.XOR(op1, hel.wire_expand(64, nl.SELECT(2, instr)))
 	op2_1 = nl.XOR(op2, hel.wire_expand(64, nl.SELECT(4, instr)))
@@ -63,5 +64,6 @@ def alu(instr, useCarry, op1, op2, carryFlag, val = None, flags = None):
 	flags_1 = nl.CONCAT(flag_N, flag_Z)
 	flags_2 = nl.CONCAT(flags_1, flag_C)
 	flags = nl.CONCAT(flags_2, flag_V, flags)
+	nl.group_outputs([val, flags])
 	nl.pop_context()
 	return (val, flags)

@@ -4,6 +4,7 @@ import helpers as hel
 
 def opcodeGetter(i_pctr, i_flagValue, o_flagSelect=None, o_opcode=None):
 	push_context("opcode_getter")
+	group_pins([i_pctr, i_flagValue], [o_flagSelect, o_opcode])
 	if o_flagSelect == None:
 		o_flagSelect = fresh(4)
 	if o_opcode == None:
@@ -21,5 +22,6 @@ def opcodeGetter(i_pctr, i_flagValue, o_flagSelect=None, o_opcode=None):
 			i_flagValue)
 
 	o_opcode = AND(romOut, AND(maskWrite, maskFlags), o_opcode)
+	group_outputs([o_flagSelect, o_opcode])
 	pop_context()
 	return o_opcode

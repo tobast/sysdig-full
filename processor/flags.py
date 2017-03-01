@@ -35,7 +35,10 @@ def cndSelector(flags, i_flagSelect, o_flagVal):
 
 def flags(i_flags, i_flagWrite, i_flagSelect, o_flagVal, o_flagsOut):
 	push_context("flags")
+	group_pins([i_flags, i_flagWrite, i_flagSelect],
+			   [o_flagVal, o_flagsOut])
 	o_flagsOut = flagsMem(i_flags, i_flagWrite, o_flagsOut)
 	o_flagVal = cndSelector(o_flagsOut, i_flagSelect, o_flagVal)
+	group_outputs([o_flagVal, o_flagsOut])
 	pop_context()
 	return o_flagVal, o_flagsOut

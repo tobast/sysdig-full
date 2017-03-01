@@ -19,6 +19,7 @@ def show(pin, name):
 		push_context(name)
 		o = fresh(get_size(pin))
 		output(WIRE(pin, o))
+		group_output([pin], [o])
 		pop_context()
 
 def main():
