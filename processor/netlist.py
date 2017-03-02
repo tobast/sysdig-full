@@ -1,3 +1,6 @@
+import prettyprint
+
+
 class Group:
     def __init__(self, name):
         self.inputs = []  # Pair (formal, actual)
@@ -266,3 +269,7 @@ def print_netlist():
                         for name, size in allVars.items()))
     print("IN")
     print("\n".join(allInstrs))
+
+
+def print_isoml():
+    prettyprint.toIsoML(rootGroup)

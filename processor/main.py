@@ -1,6 +1,8 @@
 #!/usr/bin/python3
 # -*- coding: utf-8 -*-
 
+import sys
+
 import alu
 import flags
 import op1processor
@@ -173,7 +175,10 @@ def main():
                 resultSelectorPin.o_output)
 
 	### WE'RE DONE! ###
-	print_netlist()
+	if '--isoml' in sys.argv:
+		print_isoml()
+	else:
+		print_netlist()
 
 if __name__ == '__main__':
 	main()
