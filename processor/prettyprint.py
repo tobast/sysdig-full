@@ -46,13 +46,13 @@ def toIsoML(group, indent=0):
             elif rvals[0] == 'SLICE':
                 assert(len(rvals) == 4)
                 line('{} = SLICE {} {} {}'.format(lval, rvals[3],
-                                                  int(rvals[1]) - 1,
-                                                  rvals[2]))
+                                                  int(rvals[1]),
+                                                  int(rvals[2]) + 1))
             elif rvals[0] == 'SELECT':
                 assert(len(rvals) == 3)
                 line('{} = SLICE {} {} {}'.format(lval, rvals[2],
-                                                  int(rvals[1]) - 1,
-                                                  rvals[1]))
+                                                  int(rvals[1]),
+                                                  int(rvals[1]) + 1))
             elif rvals[0] == 'CONCAT':
                 assert(len(rvals) == 3)
                 line('{} = MERGE {} {}'.format(lval, rvals[1], rvals[2]))
