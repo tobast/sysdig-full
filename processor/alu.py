@@ -3,8 +3,12 @@ import helpers as hel
 
 def half_adder(source1, source2, s = None, c = None):
 	"""peut prendre les fils de sortie ou les générer"""
+	nl.push_context('half_adder')
+	nl.group_pins([source1, source2], [s, c])
 	c = nl.AND(source1, source2, c)
 	s = nl.XOR(source1, source2, s)
+	nl.group_outputs([s, c])
+	nl.pop_context()
 	return (s, c)
 
 def incr(n, source, s = None, c = None):
@@ -18,25 +22,36 @@ def incr(n, source, s = None, c = None):
 	return (s, c)
 
 def full_adder(source1, source2, c_in, s = None, c_out = None):
+	nl.push_context("full_adder")
+	nl.group_pins([source1, source2, c_in], [s, c_out])
 	r1 = nl.AND(source1, source2)
 	r2 = nl.OR(source1, source2)
 	r3 = nl.AND(r2, c_in)
 	c_out = nl.OR(r1, r3, c_out)
 	s1 = nl.XOR(source1, source2)
 	s = nl.XOR(s1, c_in, s)
+	nl.group_outputs([s, c_out])
+	nl.pop_context()
 	return (s, c_out) 
 
 def full_adder_n(n, nappe1, nappe2, c_in, need_fl_V, \
-		  s = None, c_out = None, fl_V = None):
+                 s = None, c_out = None, fl_V = None, makeGroup=True):
+	if makeGroup:
+		nl.push_context("full_adder_words")
+		nl.group_pins([nappe1, nappe2, c_in], [s, c_out, fl_V])
 	if n == 1:
 		s, c_out = full_adder(nl.SELECT(1, nappe1), nl.SELECT(1, nappe2), c_in)
 		return (s, c_out, fl_V)
 	s_temp, c_temp, fl_V_useless = full_adder_n(n - 1, nappe1, nappe2, \
-			c_in, False)
+			c_in, False, makeGroup=False)
 	s1, c_out = full_adder(nl.SELECT(n, nappe1), nl.SELECT(n, nappe2), c_temp, None, c_out)
 	s = nl.CONCAT(s_temp, s1, s)
 	if need_fl_V:
 		fl_V = nl.XOR(c_temp, c_out, fl_V)
+
+	if makeGroup:
+		nl.group_outputs([s, c_out, fl_V])
+		nl.pop_context()
 	return (s, c_out, fl_V)
 
 def alu(instr, useCarry, op1, op2, carryFlag, val = None, flags = None):

@@ -4,11 +4,15 @@ import alu
 import constants
 
 def register(data, write_enable, destr = None):
+	nl.push_context('reg')
+	nl.group_pins([data, write_enable], [destr])
 	n = nl.get_size(data)
 	u = nl.fresh(n)
 	destr = nl.REG(u, destr)
 	write_n = helpers.wire_expand(n, write_enable)
 	nl.MUX(destr, data, write_n, u)
+	nl.group_output(destr)
+	nl.pop_context()
 	return destr
 
 def register_pc(data, write_enable, destr = None):
