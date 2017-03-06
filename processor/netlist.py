@@ -90,11 +90,20 @@ def input(name):
 
 
 def declare_foreign(name):
-    if name not in curGroup[-1].vars:
+    if name not in curGroup[-1].vars and name not in curGroup[-1].foreignVars:
         topGrp = curGroup.pop()
         varLen = findVar(name)
         curGroup.append(topGrp)
-        curGroup[-1].foreignVars[name] = varLen
+    else:
+        varLen = findVar(name)
+
+    def declareForGroup(grp):
+        if name not in grp.vars and name not in grp.foreignVars:
+            grp.foreignVars[name] = varLen
+
+    declareForGroup(curGroup[-1])
+    if len(curGroup) > 1:
+        declareForGroup(curGroup[-2])
 
 
 def group_input(name):
